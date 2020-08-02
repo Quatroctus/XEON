@@ -12,3 +12,8 @@
 /Sandbox/Sandbox.vcxproj.user
 /Sandbox/Sandbox.vcxproj.filters
 /Sandbox/Sandbox.vcxproj
+/.vs/XEON/v16
+/bin
+/bin-int
+*.bat
+*.sln

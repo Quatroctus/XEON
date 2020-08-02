@@ -4,6 +4,7 @@
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #pragma warning(push, 0)
+
 namespace XEON {
 	class XEON_API Log {
 	public:
@@ -17,6 +18,7 @@ namespace XEON {
 	};
 }
 
+#pragma warning(pop)
 // XEON Logging MACROS
 #define XEON_TRACE(...) ::XEON::Log::GetCoreLogger()->trace(__VA_ARGS__)
 #define XEON_INFO(...) ::XEON::Log::GetCoreLogger()->info(__VA_ARGS__)
@@ -30,4 +32,3 @@ namespace XEON {
 #define APP_WARN(...) ::XEON::Log::GetAppLogger()->warn(__VA_ARGS__)
 #define APP_ERROR(...) ::XEON::Log::GetAppLogger()->error(__VA_ARGS__)
 #define APP_FATAL(...) ::XEON::Log::GetAppLogger()->critical(__VA_ARGS__)
-#pragma warning(pop)
