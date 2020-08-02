@@ -2,9 +2,15 @@
 #include "core.h"
 
 namespace XEON {
+
+	struct ApplicationData {
+		const char* loggerName = "XEON Application";
+	};
+
 	class XEON_API Application {
 	public:
-		Application();
+		ApplicationData applicationData;
+		Application(ApplicationData data);
 		virtual ~Application();
 		void run();
 	};

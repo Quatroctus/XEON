@@ -2,7 +2,7 @@
 
 class Sandbox : public XEON::Application {
 public:
-	Sandbox() {}
+	Sandbox() : Application({"Sandbox"}) {}
 
 	~Sandbox() {}
 

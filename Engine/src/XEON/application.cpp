@@ -2,7 +2,7 @@
 
 namespace XEON {
 	
-	Application::Application() { }
+	Application::Application(ApplicationData data) : applicationData(data) { }
 
 	Application::~Application() { }
 
