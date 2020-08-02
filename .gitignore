@@ -1,0 +1,14 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/Engine/.vs/Engine/v16
+/Engine/bin/Debug-Win32
+/Engine/bin-int/Debug-Win32
+/Engine/Engine.sln
+/Engine/Engine.vcxproj
+/Engine/Engine.vcxproj.filters
+/Engine/Engine.vcxproj.user
+/Sandbox/Sandbox.vcxproj.user
+/Sandbox/Sandbox.vcxproj.filters
+/Sandbox/Sandbox.vcxproj
