@@ -22,13 +22,17 @@ project "Engine"
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "%{prj.name}")
 
+	pchheader "xeonpch.h"
+	pchsource "Engine/src/xeonpch.cpp"
+
 	files {
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp"
 	}
 
 	includedirs {
-		"%{prj.name}/vendor/spdlog/include"
+		"%{prj.name}/vendor/spdlog/include",
+		"Engine/src"
 	}
 
 	filter "system:windows"

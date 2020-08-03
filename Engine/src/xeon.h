@@ -8,6 +8,13 @@
 #include "XEON/log.h"
 // ----------------------------------
 
+// ------------- Events -------------
+#include "XEON/events/event.h"
+#include "XEON/events/application_event.h"
+#include "XEON/events/key_event.h"
+#include "XEON/events/mouse_event.h"
+// ----------------------------------
+
 // --------- Entry Point ------------
 #include "XEON/entry_point.h"
 // ----------------------------------

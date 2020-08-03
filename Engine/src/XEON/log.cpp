@@ -1,4 +1,8 @@
-#include "log.h"
+#include "xeonpch.h"
+#include "XEON/log.h"
+#pragma warning(push, 0)
+#include <spdlog/sinks/stdout_color_sinks.h>
+#pragma warning(pop)
 
 namespace XEON {
 	

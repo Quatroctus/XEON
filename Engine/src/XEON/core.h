@@ -8,7 +8,6 @@
 #endif
 #else
 #error XEON only supports Windows.
-#endif // XEON_PLATFORM_WINDOWS
+#endif
 
-
-
+#define BIT(x) (1 << x)
