@@ -5,7 +5,7 @@
 // ----------------------------------
 
 // ------------- Log ----------------
-#include "XEON/log.h"
+//#include "XEON/log.h"
 // ----------------------------------
 
 // ------------- Events -------------
@@ -13,6 +13,10 @@
 #include "XEON/events/application_event.h"
 #include "XEON/events/key_event.h"
 #include "XEON/events/mouse_event.h"
+// ----------------------------------
+
+// --------- Input Polling ----------
+#include "XEON/input.h"
 // ----------------------------------
 
 // --------- Entry Point ------------

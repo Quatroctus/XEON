@@ -17,3 +17,4 @@
 /bin-int
 *.bat
 *.sln
+/Engine/vendor/glad/bin/Debug32-windows-x86/glad

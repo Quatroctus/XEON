@@ -14,6 +14,15 @@ workspace "XEON"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
+IncludeDirs = {}
+IncludeDirs["GLFW"] = "Engine/vendor/GLFW/include"
+IncludeDirs["glad"] = "Engine/vendor/glad/include"
+IncludeDirs["imgui"] = "Engine/vendor/imgui"
+
+include "Engine/vendor/GLFW"
+include "Engine/vendor/glad"
+include "Engine/vendor/imgui"
+
 project "Engine"
 	location "Engine"
 	kind "SharedLib"
@@ -32,8 +41,27 @@ project "Engine"
 
 	includedirs {
 		"%{prj.name}/vendor/spdlog/include",
-		"Engine/src"
+		"Engine/src",
+		"%{IncludeDirs.GLFW}",
+		"%{IncludeDirs.glad}",
+		"%{IncludeDirs.imgui}"
 	}
+
+	links {
+		"GLFW",
+		"glad",
+		"imgui",
+		"opengl32.lib"
+	}
+
+	filter "configurations:*32"
+		links {
+			"E:/Programming/Personal/C++/libraries/VulkanAPI/Lib32/vulkan-1.lib"
+		}
+	filter "configurations:*x86_64"
+		links {
+			"E:/Programming/Personal/C++/libraries/VulkanAPI/Lib/vulkan-1.lib"
+		}
 
 	filter "system:windows"
 		cppdialect "C++17"
@@ -41,7 +69,8 @@ project "Engine"
 		systemversion "latest"
 		defines {
 			"XEON_PLATFORM_WINDOWS",
-			"XEON_BUILD_DLL"
+			"XEON_BUILD_DLL",
+			"GLFW_INCLUDE_NONE"
 		}
 
 		postbuildcommands {
@@ -49,12 +78,15 @@ project "Engine"
 		}
 	filter "configurations:Debug*"
 		defines "XEON_DEBUG"
+		buildoptions "/MDd"
 		symbols "On"
 	filter "configurations:Release*"
 		defines "XEON_RELEASE"
+		buildoptions "/MD"
 		optimize "On"
 	filter "configurations:Distribution*"
 		defines "XEON_DIST"
+		buildoptions "/MD"
 		optimize "On"
 
 project "Sandbox"
@@ -88,10 +120,13 @@ project "Sandbox"
 		}
 	filter "configurations:Debug*"
 		defines "XEON_DEBUG"
+		buildoptions "/MDd"
 		symbols "On"
 	filter "configurations:Release*"
 		defines "XEON_RELEASE"
+		buildoptions "/MD"
 		optimize "On"
 	filter "configurations:Distribution*"
 		defines "XEON_DIST"
+		buildoptions "/MD"
 		optimize "On"

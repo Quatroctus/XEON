@@ -13,6 +13,8 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "XEON/log.h"
+
 #ifdef XEON_PLATFORM_WINDOWS
 	#include <Windows.h>
 #endif
