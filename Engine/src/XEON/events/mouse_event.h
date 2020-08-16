@@ -39,7 +39,7 @@ namespace XEON {
 		int mouseXLast, mouseYLast;
 	};
 
-	class MouseScrolledEvent : public MouseEvent {
+	class XEON_API MouseScrolledEvent : public MouseEvent {
 	public:
 		MouseScrolledEvent(int mouseX, int mouseY, float xOffset, float yOffset)
 			: MouseEvent(mouseX, mouseY), xOffset(xOffset), yOffset(yOffset) {}
@@ -60,7 +60,7 @@ namespace XEON {
 		float xOffset, yOffset;
 	};
 
-	class MouseButtonEvent : public MouseEvent {
+	class XEON_API MouseButtonEvent : public MouseEvent {
 	public:
 		inline int getButton() const { return button; }
 
@@ -83,7 +83,7 @@ namespace XEON {
 		EVENT_CLASS_TYPE(MOUSE_BUTTON_PRESSED)
 	};
 
-	class MouseButtonReleasedEvent : public MouseButtonEvent {
+	class XEON_API MouseButtonReleasedEvent : public MouseButtonEvent {
 	public:
 		MouseButtonReleasedEvent(int mouseX, int mouseY, int button) : MouseButtonEvent(mouseX, mouseY, button) {}
 

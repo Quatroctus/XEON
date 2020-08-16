@@ -1,5 +1,5 @@
 #include "xeonpch.h"
-#include "XEON/platform/windows/WindowsWindow.h"
+#include "XEON/platform/windows/windows_window.h"
 #include "XEON/events/application_event.h"
 #include "XEON/events/key_event.h"
 #include "XEON/events/mouse_event.h"
@@ -15,8 +15,8 @@ namespace XEON {
 		XEON_ERROR("GLFW Error ({0}): {1}", error, desc);
 	}
 
-	Window* Window::Create(const WindowData& data) {
-		return new WindowsWindow(data);
+	std::unique_ptr<Window> Window::Create(const WindowData& data) {
+		return std::make_unique<WindowsWindow>(data);
 	}
 
 	WindowsWindow::WindowsWindow(const WindowData& data) {
@@ -62,42 +62,43 @@ namespace XEON {
 			switch (action) {
 				case GLFW_PRESS:
 				{
-					Input::setKeyRepeatCount(key, 0);
-					KeyPressEvent event(key, 0);
+					Input::getKeyRepeatCount(key) = 0;
+					KeyPressedEvent event(key, 0);
 					data.eventCallback(event);
 					break;
 				}
 				case GLFW_RELEASE:
 				{
-					Input::setKeyRepeatCount(key, -1);
+					Input::getKeyRepeatCount(key) = -1;
 					KeyReleasedEvent event(key);
 					data.eventCallback(event);
 					break;
 				}
 				case GLFW_REPEAT:
 				{
-					int repeatCount = Input::getKeyRepeatCount(key) + 1;
-					Input::setKeyRepeatCount(key, repeatCount);
-					KeyPressEvent event(key, repeatCount);
+					KeyPressedEvent event(key, ++Input::getKeyRepeatCount(key));
 					data.eventCallback(event);
 					break;
 				}
 			}
+		});
+		glfwSetCharCallback(window, [](GLFWwindow* window, unsigned int key) {
+			WindowData& data = *((WindowData*)glfwGetWindowUserPointer(window));
+			KeyTypedEvent event(key);
+			data.eventCallback(event);
 		});
 		glfwSetMouseButtonCallback(window, [](GLFWwindow* window, int button, int action, int mods) {
 			WindowData& data = *((WindowData*)glfwGetWindowUserPointer(window));
 			switch (action) {
 				case GLFW_PRESS:
 				{
-					Input::setMouseButtonState(button, true);
 					MouseButtonPressedEvent event(Input::getMouseX(), Input::getMouseY(), button);
 					data.eventCallback(event);
 					break;
 				}
 				case GLFW_RELEASE:
 				{
-					Input::setMouseButtonState(button, false);
-					MouseButtonReleasedEvent event(0, 0, button);
+					MouseButtonReleasedEvent event(Input::getMouseX(), Input::getMouseY(), button);
 					data.eventCallback(event);
 					break;
 				}
@@ -111,7 +112,7 @@ namespace XEON {
 		glfwSetCursorPosCallback(window, [](GLFWwindow* window, double x, double y) {
 			WindowData& data = *((WindowData*)glfwGetWindowUserPointer(window));
 			MouseMovedEvent event(Input::getMouseX(), Input::getMouseY(), (int) x, (int) y);
-			Input::setMousePosition(x, y);
+			Input::setMousePos((float) x, (float) y);
 			data.eventCallback(event);
 		});
 	}

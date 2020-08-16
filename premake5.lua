@@ -7,6 +7,7 @@ workspace "XEON"
 		"Release64",
 		"Distribution64"
 	}
+	startproject "Sandbox"
 	filter "configurations:*32"
 		architecture "x86"
 	filter "configurations:*64"
@@ -19,14 +20,18 @@ IncludeDirs["GLFW"] = "Engine/vendor/GLFW/include"
 IncludeDirs["glad"] = "Engine/vendor/glad/include"
 IncludeDirs["imgui"] = "Engine/vendor/imgui"
 
-include "Engine/vendor/GLFW"
-include "Engine/vendor/glad"
-include "Engine/vendor/imgui"
+group "Dependencies" 
+	include "Engine/vendor/GLFW"
+	include "Engine/vendor/glad"
+	include "Engine/vendor/imgui"
+
+group ""
 
 project "Engine"
 	location "Engine"
 	kind "SharedLib"
 	language "C++"
+	staticruntime "off"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "%{prj.name}")
@@ -65,7 +70,6 @@ project "Engine"
 
 	filter "system:windows"
 		cppdialect "C++17"
-		staticruntime "On"
 		systemversion "latest"
 		defines {
 			"XEON_PLATFORM_WINDOWS",
@@ -74,25 +78,25 @@ project "Engine"
 		}
 
 		postbuildcommands {
-			("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/Sandbox")
+			("{COPY} %{cfg.buildtarget.relpath} \"../bin/" .. outputdir .. "/Sandbox/\"")
 		}
 	filter "configurations:Debug*"
 		defines "XEON_DEBUG"
-		buildoptions "/MDd"
-		symbols "On"
+		runtime "Debug"
+		symbols "on"
 	filter "configurations:Release*"
 		defines "XEON_RELEASE"
-		buildoptions "/MD"
-		optimize "On"
+		runtime "Release"
+		optimize "on"
 	filter "configurations:Distribution*"
 		defines "XEON_DIST"
-		buildoptions "/MD"
-		optimize "On"
+		optimize "on"
 
 project "Sandbox"
 	location "Sandbox"
 	kind "ConsoleApp"
 	language "C++"
+	staticruntime "off"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "%{prj.name}")
@@ -113,20 +117,19 @@ project "Sandbox"
 
 	filter "system:windows"
 		cppdialect "C++17"
-		staticruntime "On"
 		systemversion "latest"
 		defines {
 			"XEON_PLATFORM_WINDOWS"
 		}
 	filter "configurations:Debug*"
 		defines "XEON_DEBUG"
-		buildoptions "/MDd"
-		symbols "On"
+		runtime "Debug"
+		symbols "on"
 	filter "configurations:Release*"
 		defines "XEON_RELEASE"
-		buildoptions "/MD"
-		optimize "On"
+		runtime "Release"
+		optimize "on"
 	filter "configurations:Distribution*"
 		defines "XEON_DIST"
 		buildoptions "/MD"
-		optimize "On"
+		optimize "on"

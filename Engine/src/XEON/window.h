@@ -33,6 +33,8 @@ namespace XEON {
 		virtual void setVSync(bool enabled) = 0;
 		virtual bool isVSync() const = 0;
 
-		static Window* Create(const WindowData& data=WindowData());
+		virtual void* getNativeWindow() const = 0;
+
+		static std::unique_ptr<Window> Create(const WindowData& data=WindowData());
 	};
 }

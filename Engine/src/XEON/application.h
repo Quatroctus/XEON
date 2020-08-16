@@ -24,12 +24,18 @@ namespace XEON {
 		void pushLayer(Layer* layer);
 		void pushOverlay(Layer* overlay);
 
+		inline Window& getWindow() { return *window; }
+
+		static inline Application& Get() { return *application; }
+
 	private:
 		bool running = true;
 		std::unique_ptr<Window> window;
 		LayerStack layerStack;
 
 		bool onWindowClose(WindowCloseEvent& e);
+
+		static Application* application;
 
 	};
 

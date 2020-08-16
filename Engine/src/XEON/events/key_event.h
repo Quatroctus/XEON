@@ -14,9 +14,9 @@ namespace XEON {
 		KeyEvent(int keyCode) : keyCode(keyCode) {}
 	};
 
-	class XEON_API KeyPressEvent : public KeyEvent {
+	class XEON_API KeyPressedEvent : public KeyEvent {
 	public:
-		KeyPressEvent(int keyCode, int repeatCount) : KeyEvent(keyCode), repeatCount(repeatCount) {}
+		KeyPressedEvent(int keyCode, int repeatCount) : KeyEvent(keyCode), repeatCount(repeatCount) {}
 
 		inline int getRepeatCount() const { return repeatCount; }
 
@@ -30,6 +30,19 @@ namespace XEON {
 
 	private:
 		const int repeatCount;
+	};
+
+	class XEON_API KeyTypedEvent : public KeyEvent {
+	public:
+		KeyTypedEvent(int keyCode) : KeyEvent(keyCode) {}
+
+		std::string toString() const override {
+			std::stringstream ss;
+			ss << "KeyTypedEvent{keyCode: " << keyCode << "}";
+			return ss.str();
+		}
+
+		EVENT_CLASS_TYPE(KEY_TYPED)
 	};
 
 	class XEON_API KeyReleasedEvent : public KeyEvent {

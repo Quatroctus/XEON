@@ -20,6 +20,8 @@ namespace XEON {
 		void setVSync(bool enabled) override;
 		bool isVSync() const override;
 
+		virtual inline void* getNativeWindow() const override { return window; }
+
 	private:
 		GLFWwindow* window;
 		WindowData data;
