@@ -5,26 +5,26 @@
 namespace XEON {
 	class XEON_API MouseEvent : public Event {
 	public:
-		inline int getX() const { return mouseX; }
-		inline int getY() const { return mouseY; }
+		inline float getX() const { return mouseX; }
+		inline float getY() const { return mouseY; }
 
 		EVENT_CLASS_CATEGORY(EventCategory::MOUSE | EventCategory::NONE)
 
 	protected:
-		int mouseX, mouseY;
-		MouseEvent(int mouseX, int mouseY) : mouseX(mouseX), mouseY(mouseY) {}
+		float mouseX, mouseY;
+		MouseEvent(float mouseX, float mouseY) : mouseX(mouseX), mouseY(mouseY) {}
 
 	};
 
 	class XEON_API MouseMovedEvent : public MouseEvent {
 	public:
-		MouseMovedEvent(int mouseXLast, int mouseYLast, int mouseX, int mouseY)
+		MouseMovedEvent(float mouseXLast, float mouseYLast, float mouseX, float mouseY)
 			: MouseEvent(mouseX, mouseY), mouseXLast(mouseXLast), mouseYLast(mouseYLast) {}
 
-		inline int getLastX() const { return mouseXLast; }
-		inline int getLastY() const { return mouseYLast; }
-		inline int getDeltaX() const { return mouseX - mouseXLast; }
-		inline int getDeltaY() const { return mouseY - mouseYLast; }
+		inline float getLastX() const { return mouseXLast; }
+		inline float getLastY() const { return mouseYLast; }
+		inline float getDeltaX() const { return mouseX - mouseXLast; }
+		inline float getDeltaY() const { return mouseY - mouseYLast; }
 
 		std::string toString() const override {
 			std::stringstream ss;
@@ -36,12 +36,12 @@ namespace XEON {
 		EVENT_CLASS_TYPE(MOUSE_MOTION)
 
 	private:
-		int mouseXLast, mouseYLast;
+		float mouseXLast, mouseYLast;
 	};
 
 	class XEON_API MouseScrolledEvent : public MouseEvent {
 	public:
-		MouseScrolledEvent(int mouseX, int mouseY, float xOffset, float yOffset)
+		MouseScrolledEvent(float mouseX, float mouseY, float xOffset, float yOffset)
 			: MouseEvent(mouseX, mouseY), xOffset(xOffset), yOffset(yOffset) {}
 
 		inline float getXOffset() const { return xOffset; }
@@ -67,12 +67,12 @@ namespace XEON {
 		EVENT_CLASS_CATEGORY(EventCategory::MOUSE | EventCategory::MOUSE_BUTTON)
 	protected:
 		int button;
-		MouseButtonEvent(int mouseX, int mouseY, int button) : MouseEvent(mouseX, mouseY), button(button) {}
+		MouseButtonEvent(float mouseX, float mouseY, int button) : MouseEvent(mouseX, mouseY), button(button) {}
 	};
 
 	class MouseButtonPressedEvent : public MouseButtonEvent {
 	public:
-		MouseButtonPressedEvent(int mouseX, int mouseY, int button) : MouseButtonEvent(mouseX, mouseY, button) {}
+		MouseButtonPressedEvent(float mouseX, float mouseY, int button) : MouseButtonEvent(mouseX, mouseY, button) {}
 
 		std::string toString() const override {
 			std::stringstream ss;
@@ -85,7 +85,7 @@ namespace XEON {
 
 	class XEON_API MouseButtonReleasedEvent : public MouseButtonEvent {
 	public:
-		MouseButtonReleasedEvent(int mouseX, int mouseY, int button) : MouseButtonEvent(mouseX, mouseY, button) {}
+		MouseButtonReleasedEvent(float mouseX, float mouseY, int button) : MouseButtonEvent(mouseX, mouseY, button) {}
 
 		std::string toString() const override {
 			std::stringstream ss;

@@ -17,9 +17,9 @@ namespace XEON {
 		return glfwGetMouseButton(static_cast<GLFWwindow*>(Application::Get().getWindow().getNativeWindow()), button);
 	}
 
-	int WindowsInput::getMouseXImpl() const { return mouseX; }
+	float WindowsInput::getMouseXImpl() const { return mouseX; }
 
-	int WindowsInput::getMouseYImpl() const { return mouseY; }
+	float WindowsInput::getMouseYImpl() const { return mouseY; }
 
 	void WindowsInput::setMousePosImpl(float x, float y) { mouseX = x; mouseY = y; }
 

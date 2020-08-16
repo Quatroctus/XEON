@@ -18,8 +18,8 @@ namespace XEON {
 		inline static bool isMouseButtonPressed(int button) { return input->isMouseButtonPressedImpl(button); }
 
 		inline static void setMousePos(float  x, float y) { input->setMousePosImpl(x, y); }
-		inline static int getMouseX() { return input->getMouseXImpl(); }
-		inline static int getMouseY() { return input->getMouseYImpl(); }
+		inline static float getMouseX() { return input->getMouseXImpl(); }
+		inline static float getMouseY() { return input->getMouseYImpl(); }
 
 	protected:
 //		virtual inline void setKeyRepeatCountImpl(int keyCode, int repeatCount) = 0;
@@ -29,8 +29,8 @@ namespace XEON {
 //		virtual inline void setMouseButtonStateImpl(int button, bool state) = 0;
 		virtual inline bool isMouseButtonPressedImpl(int button) const = 0;
 
-		virtual inline int getMouseXImpl() const = 0;
-		virtual inline int getMouseYImpl() const = 0;
+		virtual inline float getMouseXImpl() const = 0;
+		virtual inline float getMouseYImpl() const = 0;
 //		virtual inline void setMouseXImpl(int x) = 0;
 //		virtual inline void setMouseYImpl(int y) = 0;
 		virtual inline void setMousePosImpl(float x, float y) = 0;

@@ -111,7 +111,7 @@ namespace XEON {
 		});
 		glfwSetCursorPosCallback(window, [](GLFWwindow* window, double x, double y) {
 			WindowData& data = *((WindowData*)glfwGetWindowUserPointer(window));
-			MouseMovedEvent event(Input::getMouseX(), Input::getMouseY(), (int) x, (int) y);
+			MouseMovedEvent event(Input::getMouseX(), Input::getMouseY(), (float) x, (float) y);
 			Input::setMousePos((float) x, (float) y);
 			data.eventCallback(event);
 		});

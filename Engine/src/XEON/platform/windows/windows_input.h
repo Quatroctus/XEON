@@ -13,13 +13,13 @@ namespace XEON {
 
 		virtual inline bool isMouseButtonPressedImpl(int button) const override;
 
-		virtual inline int getMouseXImpl() const override;
-		virtual inline int getMouseYImpl() const override;
+		virtual inline float getMouseXImpl() const override;
+		virtual inline float getMouseYImpl() const override;
 
 		virtual void setMousePosImpl(float x, float y) override;
 
 	private:
-		float mouseX, mouseY;
+		float mouseX = 0, mouseY = 0;
 		std::unordered_map<int, int> repeatCounts;
 	};
 
