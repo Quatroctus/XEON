@@ -2,8 +2,8 @@
 #include "XEON/core.h"
 #include "XEON/window.h"
 #include "XEON/layer_stack.h"
+#include "XEON/imgui/imgui_layer.h"
 #include "XEON/events/application_event.h"
-
 
 namespace XEON {
 
@@ -26,16 +26,17 @@ namespace XEON {
 
 		inline Window& getWindow() { return *window; }
 
-		static inline Application& Get() { return *application; }
+		static inline Application& Get() { return *Instance; }
 
 	private:
 		bool running = true;
 		std::unique_ptr<Window> window;
+		ImGuiLayer* imguiLayer;
 		LayerStack layerStack;
 
 		bool onWindowClose(WindowCloseEvent& e);
 
-		static Application* application;
+		static Application* Instance;
 
 	};
 

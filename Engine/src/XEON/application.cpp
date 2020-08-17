@@ -7,13 +7,15 @@ namespace XEON {
 	
 #define BIND_EVENT_FN(x) std::bind(&x, this, std::placeholders::_1)
 
-	Application* Application::application = nullptr;
+	Application* Application::Instance = nullptr;
 
 	Application::Application(ApplicationData data)
 		: applicationData(data), window(Window::Create()) {
-		XEON_ASSERT(!application, "Application already exists.");
-		application = this;
+		XEON_ASSERT(!Instance, "Application already exists.");
+		Instance = this;
 		window->setEventCallback(BIND_EVENT_FN(Application::onEvent));
+		imguiLayer = new ImGuiLayer();
+		pushOverlay(imguiLayer);
 	}
 
 	Application::~Application() { }
@@ -23,6 +25,11 @@ namespace XEON {
 		while (running) {
 			glClear(GL_COLOR_BUFFER_BIT);
 			for (Layer* layer : layerStack) layer->onUpdate();
+
+			imguiLayer->begin();
+			for (Layer* layer : layerStack) layer->onImGuiRender();
+			imguiLayer->end();
+
 			window->onUpdate();
 		}
 	}

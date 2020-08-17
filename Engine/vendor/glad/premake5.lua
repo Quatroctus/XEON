@@ -1,6 +1,8 @@
 project "glad"
 	kind "StaticLib"
 	language "C"
+    staticruntime "on"
+
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin/" .. outputdir .. "/%{prj.name}")
 
@@ -15,17 +17,17 @@ project "glad"
 	}
 
 	filter "system:linux"
-		pic "On"
+		pic "on"
 		systemversion "latest"
-		staticruntime "On"
 
 	filter "system:windows"
 		systemversion "latest"
-		staticruntime "On"
 
-	filter "configurations:Debug*"
+    filter "configurations:Debug*"
+		defines "XEON_DEBUG"
 		runtime "Debug"
-		symbols "On"
+		symbols "on"
 	filter "configurations:Release*"
+		defines "XEON_RELEASE"
 		runtime "Release"
-		optimize "On"
+		optimize "on"

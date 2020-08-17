@@ -19,8 +19,9 @@ IncludeDirs = {}
 IncludeDirs["GLFW"] = "Engine/vendor/GLFW/include"
 IncludeDirs["glad"] = "Engine/vendor/glad/include"
 IncludeDirs["imgui"] = "Engine/vendor/imgui"
+IncludeDirs["glm"] = "Engine/vendor/glm"
 
-group "Dependencies" 
+group "Dependencies"
 	include "Engine/vendor/GLFW"
 	include "Engine/vendor/glad"
 	include "Engine/vendor/imgui"
@@ -29,9 +30,10 @@ group ""
 
 project "Engine"
 	location "Engine"
-	kind "SharedLib"
+	kind "StaticLib"
 	language "C++"
-	staticruntime "off"
+    cppdialect "C++17"
+	staticruntime "on"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "%{prj.name}")
@@ -41,7 +43,13 @@ project "Engine"
 
 	files {
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp"
+		"%{prj.name}/src/**.cpp",
+		"%[prj.name}/vendor/glm/glm/**.hpp",
+		"%[prj.name}/vendor/glm/glm/**.inl"
+	}
+
+	defines {
+		"_CRT_SECURE_NO_WARNINGS"
 	}
 
 	includedirs {
@@ -49,14 +57,14 @@ project "Engine"
 		"Engine/src",
 		"%{IncludeDirs.GLFW}",
 		"%{IncludeDirs.glad}",
-		"%{IncludeDirs.imgui}"
+		"%{IncludeDirs.imgui}",
+		"%{IncludeDirs.glm}"
 	}
 
 	links {
 		"GLFW",
 		"glad",
-		"imgui",
-		"opengl32.lib"
+		"imgui"
 	}
 
 	filter "configurations:*32"
@@ -69,17 +77,14 @@ project "Engine"
 		}
 
 	filter "system:windows"
-		cppdialect "C++17"
-		systemversion "latest"
+        systemversion "latest"
+
 		defines {
 			"XEON_PLATFORM_WINDOWS",
 			"XEON_BUILD_DLL",
 			"GLFW_INCLUDE_NONE"
 		}
 
-		postbuildcommands {
-			("{COPY} %{cfg.buildtarget.relpath} \"../bin/" .. outputdir .. "/Sandbox/\"")
-		}
 	filter "configurations:Debug*"
 		defines "XEON_DEBUG"
 		runtime "Debug"
@@ -96,7 +101,8 @@ project "Sandbox"
 	location "Sandbox"
 	kind "ConsoleApp"
 	language "C++"
-	staticruntime "off"
+    cppdialect "C++17"
+	staticruntime "on"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "%{prj.name}")
@@ -108,7 +114,9 @@ project "Sandbox"
 
 	includedirs {
 		"Engine/vendor/spdlog/include",
-		"Engine/src"
+		"Engine/src",
+		"%{IncludeDirs.glm}",
+		"%{IncludeDirs.imgui}"
 	}
 
 	links {
@@ -116,7 +124,6 @@ project "Sandbox"
 	}
 
 	filter "system:windows"
-		cppdialect "C++17"
 		systemversion "latest"
 		defines {
 			"XEON_PLATFORM_WINDOWS"
@@ -131,5 +138,4 @@ project "Sandbox"
 		optimize "on"
 	filter "configurations:Distribution*"
 		defines "XEON_DIST"
-		buildoptions "/MD"
 		optimize "on"

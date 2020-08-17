@@ -13,6 +13,7 @@ namespace XEON {
 		virtual void onAttach() {}
 		virtual void onDetach() {}
 		virtual void onUpdate() {}
+		virtual void onImGuiRender() {}
 		virtual void onEvent(Event& e) {}
 
 		inline const char* getName() const { return debugName; }

@@ -1,10 +1,14 @@
 #pragma once
 
 #ifdef XEON_PLATFORM_WINDOWS
+#if XEON_DYNAMIC_LINK
 #ifdef XEON_BUILD_DLL
 #define XEON_API __declspec(dllexport)
 #else
 #define XEON_API __declspec(dllimport)
+#endif
+#else
+#define XEON_API
 #endif
 #else
 #error XEON only supports Windows.
