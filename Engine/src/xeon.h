@@ -1,12 +1,15 @@
 #pragma once
-#pragma warning(push, 0)
 // --------- Application ------------
-#include "XEON/application.h"
+#include "XEON/core/application.h"
 #include "XEON/imgui/imgui_layer.h"
 // ----------------------------------
 
 // ------------- Log ----------------
-//#include "XEON/log.h"
+#include "XEON/core/log.h"
+// ----------------------------------
+
+// ----------------------------------
+#include "XEON/core/timestep.h"
 // ----------------------------------
 
 // ------- Input Codes Codes --------
@@ -21,11 +24,18 @@
 #include "XEON/events/mouse_event.h"
 // ----------------------------------
 
-// --------- Input Polling ----------
-#include "XEON/input.h"
+// ----------------------------------
+#include "XEON/renderer/buffers.h"
+#include "XEON/renderer/orthographic_camera.h"
+#include "XEON/renderer/render_command.h"
+#include "XEON/renderer/renderer.h"
+#include "XEON/renderer/renderer_2d.h"
+#include "XEON/renderer/shader.h"
+#include "XEON/renderer/vertex_array.h"
+#include "XEON/renderer/texture.h"
 // ----------------------------------
 
-// --------- Entry Point ------------
-#include "XEON/entry_point.h"
+// ------------- Input --------------
+#include "XEON/core/input.h"
+#include "XEON/orthographic_camera_controller.h"
 // ----------------------------------
-#pragma warning(pop)

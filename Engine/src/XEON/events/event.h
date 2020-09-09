@@ -1,7 +1,7 @@
 #pragma once
 
 #include "xeonpch.h"
-#include "XEON/core.h"
+#include "XEON/core/core.h"
 
 namespace XEON {
 
@@ -25,7 +25,7 @@ namespace XEON {
 	inline int operator| (EventCategory c1, EventCategory c2) { return static_cast<int>(c1) | static_cast<int>(c2); }
 
 
-#define EVENT_CLASS_TYPE(type) static EventType getStaticType() { return EventType::##type; }\
+#define EVENT_CLASS_TYPE(type) static EventType getStaticType() { return EventType::type; }\
 								virtual EventType getEventType() const override { return getStaticType(); }\
 								virtual const char* getName() const override { return #type; }
 

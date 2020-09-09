@@ -1,6 +1,8 @@
 #pragma once
 
-#include "XEON/window.h"
+#include "XEON/core/window.h"
+#include "XEON/renderer/graphics_context.h"
+
 #include <GLFW/glfw3.h>
 
 namespace XEON {
@@ -24,6 +26,7 @@ namespace XEON {
 
 	private:
 		GLFWwindow* window;
+		Scope<GraphicsContext> context;
 		WindowData data;
 		
 		virtual void init(const WindowData& data);

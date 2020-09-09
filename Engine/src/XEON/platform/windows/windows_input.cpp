@@ -3,7 +3,7 @@
 
 namespace XEON {
 	
-	Input* Input::input = new WindowsInput();
+	Scope<Input> Input::input = CreateScope<WindowsInput>();
 
 	int& WindowsInput::getKeyRepeatCountImpl(int keyCode) {
 		return repeatCounts.find(keyCode) != repeatCounts.end() ? repeatCounts.find(keyCode)->second : (repeatCounts[keyCode] = -1);

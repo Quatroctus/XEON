@@ -8,9 +8,9 @@ workspace "XEON"
 		"Distribution64"
 	}
 	startproject "Sandbox"
-	filter "configurations:*32"
+	filter "configurations:**32"
 		architecture "x86"
-	filter "configurations:*64"
+	filter "configurations:**64"
 		architecture "x86_64"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
@@ -20,6 +20,7 @@ IncludeDirs["GLFW"] = "Engine/vendor/GLFW/include"
 IncludeDirs["glad"] = "Engine/vendor/glad/include"
 IncludeDirs["imgui"] = "Engine/vendor/imgui"
 IncludeDirs["glm"] = "Engine/vendor/glm"
+IncludeDirs["stb_image"] = "Engine/vendor/stb_image"
 
 group "Dependencies"
 	include "Engine/vendor/GLFW"
@@ -44,6 +45,8 @@ project "Engine"
 	files {
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/vendor/stb_image/**.h",
+		"%{prj.name}/vendor/stb_image/**.cpp",
 		"%[prj.name}/vendor/glm/glm/**.hpp",
 		"%[prj.name}/vendor/glm/glm/**.inl"
 	}
@@ -58,7 +61,8 @@ project "Engine"
 		"%{IncludeDirs.GLFW}",
 		"%{IncludeDirs.glad}",
 		"%{IncludeDirs.imgui}",
-		"%{IncludeDirs.glm}"
+		"%{IncludeDirs.glm}",
+		"%{IncludeDirs.stb_image}"
 	}
 
 	links {
@@ -80,7 +84,6 @@ project "Engine"
         systemversion "latest"
 
 		defines {
-			"XEON_PLATFORM_WINDOWS",
 			"XEON_BUILD_DLL",
 			"GLFW_INCLUDE_NONE"
 		}
@@ -125,9 +128,7 @@ project "Sandbox"
 
 	filter "system:windows"
 		systemversion "latest"
-		defines {
-			"XEON_PLATFORM_WINDOWS"
-		}
+
 	filter "configurations:Debug*"
 		defines "XEON_DEBUG"
 		runtime "Debug"

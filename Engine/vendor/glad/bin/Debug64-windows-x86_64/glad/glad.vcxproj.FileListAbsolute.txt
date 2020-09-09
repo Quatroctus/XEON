@@ -1,0 +1,1 @@
+E:\Programming\Personal\C++\XEON Engine\Engine\vendor\glad\bin\Debug64-windows-x86_64\glad\glad.lib

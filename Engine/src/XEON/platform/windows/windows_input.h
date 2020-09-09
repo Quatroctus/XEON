@@ -1,6 +1,6 @@
 #pragma once
-#include "XEON/input.h"
-#include "XEON/application.h"
+#include "XEON/core/input.h"
+#include "XEON/core/application.h"
 
 #include <GLFW/glfw3.h>
 

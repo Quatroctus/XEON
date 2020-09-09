@@ -1,11 +1,14 @@
 #include "xeonpch.h"
+
 #include "XEON/platform/windows/windows_window.h"
+
+#include "XEON/core/input.h"
+
 #include "XEON/events/application_event.h"
 #include "XEON/events/key_event.h"
 #include "XEON/events/mouse_event.h"
-#include "XEON/input.h"
 
-#include "glad/glad.h"
+#include "XEON/platform/opengl/opengl_context.h"
 
 namespace XEON {
 	
@@ -38,9 +41,9 @@ namespace XEON {
 		}
 
 		window = glfwCreateWindow((int)data.width, data.height, data.title, nullptr, nullptr);
-		glfwMakeContextCurrent(window);
-		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-		XEON_ASSERT(status, "Failed to initialize Glad!");
+		context = CreateScope<OpenGLContext>(window);
+		context->init();
+
 		glfwSetWindowUserPointer(window, &this->data);
 		setVSync(true);
 
@@ -124,7 +127,7 @@ namespace XEON {
 
 	void WindowsWindow::onUpdate() {
 		glfwPollEvents();
-		glfwSwapBuffers(window);
+		context->swapBuffers();
 	}
 
 	void WindowsWindow::setVSync(bool enabled) {
