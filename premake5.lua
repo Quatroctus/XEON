@@ -73,11 +73,11 @@ project "Engine"
 
 	filter "configurations:*32"
 		links {
-			"E:/Programming/Personal/C++/libraries/VulkanAPI/Lib32/vulkan-1.lib"
+			"$(SolutionDir)/Libraries/Vulkan/Lib32/vulkan-1.lib"
 		}
 	filter "configurations:*x86_64"
 		links {
-			"E:/Programming/Personal/C++/libraries/VulkanAPI/Lib/vulkan-1.lib"
+			"$(SolutionDir)/Libraries/Vulkan/Lib/vulkan-1.lib"
 		}
 
 	filter "system:windows"

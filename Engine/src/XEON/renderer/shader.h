@@ -14,13 +14,14 @@ namespace XEON {
 		virtual void bind() const = 0;
 		virtual void unbind() const = 0;
 
-		virtual void uploadUniformFloat(const std::string& name, float f) const = 0;
-		virtual void uploadUniformFloat2(const std::string& name, glm::vec2 vec) const = 0;
-		virtual void uploadUniformFloat3(const std::string& name, glm::vec3 vec) const = 0;
-		virtual void uploadUniformFloat4(const std::string& name, glm::vec4 vec) const = 0;
-		virtual void uploadUniformMat3(const std::string& name, const glm::mat3& matrix) const = 0;
-		virtual void uploadUniformMat4(const std::string& name, const glm::mat4& matrix) const = 0;
-		virtual void uploadUniformInt(const std::string& name, int i) const = 0;
+		virtual void setFloat(const std::string& name, float f) const = 0;
+		virtual void setFloat2(const std::string& name, glm::vec2 vec) const = 0;
+		virtual void setFloat3(const std::string& name, glm::vec3 vec) const = 0;
+		virtual void setFloat4(const std::string& name, glm::vec4 vec) const = 0;
+		virtual void setMat3(const std::string& name, const glm::mat3& matrix) const = 0;
+		virtual void setMat4(const std::string& name, const glm::mat4& matrix) const = 0;
+		virtual void setInt(const std::string& name, int i) const = 0;
+		virtual void setIntArray(const std::string& name, int* array, uint32_t count) const = 0;
 /*		
 		virtual void uploadUniformInt2(const std::string& name, glm::vec<2, int> vec) const = 0;
 		virtual void uploadUniformInt3(const std::string& name, glm::vec<3, int> vec) const = 0;

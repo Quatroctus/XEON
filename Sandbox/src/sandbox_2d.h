@@ -15,12 +15,15 @@ public:
 	virtual void onEvent(XEON::Event& e) override;
 
 private:
-	XEON::Ref<XEON::VertexArray> vertexArray;
-	XEON::Ref<XEON::Shader> flatColorShader;
+	XEON::Ref<XEON::Texture> texture;
 
 	XEON::OrthographicCameraController cameraController;
 
 	glm::vec4 squareColor { 0.2F, 0.3F, 0.8F, 1.0F };
 
+	/* Profiling data.
+	float growthRate = 1.0F;
+	glm::vec2 tileMapSize = { 1.0F, 1.0F };
+	*/
 };
 

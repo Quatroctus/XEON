@@ -61,6 +61,37 @@ namespace XEON {
 		glUseProgram(0);
 	}
 
+	void OpenGLShader::setFloat(const std::string& name, float f) const {
+		uploadUniformFloat(name, f);
+	}
+	void OpenGLShader::setFloat2(const std::string& name, glm::vec2 vec) const {
+		uploadUniformFloat2(name, vec);
+	}
+	
+	void OpenGLShader::setFloat3(const std::string& name, glm::vec3 vec) const {
+		uploadUniformFloat3(name, vec);
+	}
+	
+	void OpenGLShader::setFloat4(const std::string& name, glm::vec4 vec) const {
+		uploadUniformFloat4(name, vec);
+	}
+	
+	void OpenGLShader::setMat3(const std::string& name, const glm::mat3& matrix) const {
+		uploadUniformMat3(name, matrix);
+	}
+	
+	void OpenGLShader::setMat4(const std::string& name, const glm::mat4& matrix) const {
+		uploadUniformMat4(name, matrix);
+	}
+	
+	void OpenGLShader::setInt(const std::string& name, int i) const {
+		uploadUniformInt(name, i);
+	}
+	
+	void OpenGLShader::setIntArray(const std::string& name, int* array, uint32_t count) const {
+		uploadUniformIntArray(name, array, count);
+	}
+
 	void OpenGLShader::uploadUniformFloat(const std::string& name, float f) const {
 		GLint location = glGetUniformLocation(rendererID, name.c_str());
 		glUniform1f(location, f);
@@ -94,6 +125,11 @@ namespace XEON {
 	void OpenGLShader::uploadUniformInt(const std::string& name, int i) const {
 		GLint location = glGetUniformLocation(rendererID, name.c_str());
 		glUniform1i(location, i);
+	}
+
+	void OpenGLShader::uploadUniformIntArray(const std::string& name, int* array, uint32_t count) const {
+		GLint location = glGetUniformLocation(rendererID, name.c_str());
+		glUniform1iv(location, count, array);
 	}
 
 	std::string OpenGLShader::readFile(const std::string& path) {

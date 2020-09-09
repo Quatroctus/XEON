@@ -24,8 +24,8 @@ namespace XEON {
 
 	void Renderer::Submit(const Ref<Shader> shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform) {
 		shader->bind();
-		shader->uploadUniformMat4("u_ViewProjection", Data->viewProjectionMatrix);
-		shader->uploadUniformMat4("u_Transform", transform);
+		shader->setMat4("u_ViewProjection", Data->viewProjectionMatrix);
+		shader->setMat4("u_Transform", transform);
 		vertexArray->bind();
 		RenderCommand::DrawIndexed(vertexArray);
 	}

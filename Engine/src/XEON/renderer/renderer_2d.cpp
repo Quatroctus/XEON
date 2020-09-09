@@ -14,6 +14,7 @@ namespace XEON {
 	struct Renderer2DData {
 		Ref<VertexArray> vertexArray;
 		Ref<Shader> shader;
+		Ref<Shader> textureShader;
 	};
 
 	static Renderer2DData* Data;
@@ -22,10 +23,16 @@ namespace XEON {
 		Data = new Renderer2DData();
 		Data->vertexArray = VertexArray::Create();
 		
-		float squareVertices[12] { -0.5F, -0.5F, 0.0F, 0.5F, -0.5F, 0.0F, 0.5F, 0.5F, 0.0F, -0.5F, 0.5F, 0.0F };
+		float squareVertices[20] {
+			-0.5F, -0.5F, 0.0F, 0.0F, 0.0F,
+			0.5F, -0.5F, 0.0F, 1.0F, 0.0F,
+			0.5F, 0.5F, 0.0F, 1.0F, 1.0F,
+			-0.5F, 0.5F, 0.0F, 0.0F, 1.0F
+		};
 		Ref<VertexBuffer> vertexBuffer = VertexBuffer::Create(squareVertices, sizeof(squareVertices));
 		vertexBuffer->setLayout({
-			{ ShaderDataType::FLOAT3, "a_Position" }
+			{ ShaderDataType::FLOAT3, "a_Position" },
+			{ ShaderDataType::FLOAT2, "a_TexCoord" }
 		});
 		Data->vertexArray->addVertexBuffer(vertexBuffer);
 
@@ -34,6 +41,9 @@ namespace XEON {
 		Data->vertexArray->setIndexBuffer(indexBuffer);
 
 		Data->shader = Shader::Create("assets/shaders/flat_color.glsl");
+		Data->textureShader = Shader::Create("assets/shaders/texture.glsl");
+		Data->textureShader->bind();
+		Data->textureShader->setInt("u_Texture", 0);
 	}
 
 	void Renderer2D::Shutdown() {
@@ -42,24 +52,42 @@ namespace XEON {
 
 	void Renderer2D::BeginScene(OrthographicCamera& camera) {
 		Data->shader->bind();
-		Data->shader->uploadUniformMat4("u_ViewProjection", camera.getViewProjectionMatrix());
+		Data->shader->setMat4("u_ViewProjection", camera.getViewProjectionMatrix());
+		Data->textureShader->bind();
+		Data->textureShader->setMat4("u_ViewProjection", camera.getViewProjectionMatrix());
 	}
 
 	void Renderer2D::EndScene() {
 //		Data->shader->unbind();
 	}
 
-	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2 size, const glm::vec4 color, float rotation) {
+	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, float rotation) {
 		DrawQuad(glm::vec3(position, 0.0F), size, color);
 	}
 
-	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2 size, const glm::vec4 color, float rotation) {
+	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, float rotation) {
 		constexpr glm::mat4 identity(1.0F);
 		Data->shader->bind();
-		Data->shader->uploadUniformMat4("u_Transform", 
+		Data->shader->setMat4("u_Transform", 
 			glm::translate(identity, position) * glm::rotate(identity, rotation, glm::vec3 { 0.0F, 0.0F, 1.0F }) * glm::scale(identity, glm::vec3(size, 1.0F))
 		);
-		Data->shader->uploadUniformFloat4("u_Color", color);
+		Data->shader->setFloat4("u_Color", color);
+		Data->vertexArray->bind();
+		RenderCommand::DrawIndexed(Data->vertexArray);
+	}
+
+	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture>& texture, float rotation) {
+		DrawQuad(glm::vec3(position, 0.0F), size, texture, rotation);
+	}
+
+	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture>& texture, float rotation) {
+		constexpr glm::mat4 identity(1.0F);
+		Data->textureShader->bind();
+		Data->textureShader->setMat4("u_Transform",
+			glm::translate(identity, position) * glm::rotate(identity, rotation, glm::vec3{ 0.0F, 0.0F, 1.0F }) * glm::scale(identity, glm::vec3(size, 1.0F))
+		);
+		Data->textureShader->setInt("u_Texture", 0);
+		texture->bind(0);
 		Data->vertexArray->bind();
 		RenderCommand::DrawIndexed(Data->vertexArray);
 	}

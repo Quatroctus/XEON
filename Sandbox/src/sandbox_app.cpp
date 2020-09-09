@@ -70,7 +70,7 @@ public:
 
 		texture = XEON::Texture2D::Create("assets/textures/checkerboard.png");
 		textureShader->bind();
-		textureShader->uploadUniformInt("u_Texture", 0);
+		textureShader->setInt("u_Texture", 0);
 	}
 
 	void onUpdate(XEON::Timestep delta) override {
@@ -86,7 +86,7 @@ public:
 		glm::mat4 scale = glm::scale(identity, glm::vec3(this->scale));
 
 		flatColorShader->bind();
-		flatColorShader->uploadUniformFloat3("u_Color", color);
+		flatColorShader->setFloat3("u_Color", color);
 		for (int x = 0; x < tileMapWidth; x++) {
 			for (int y = 0; y < tileMapHeight; y++) {
 				glm::vec3 pos(x * 0.11F, y * 0.11F, 0.0F);
