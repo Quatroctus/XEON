@@ -14,7 +14,7 @@ namespace XEON {
 	struct Renderer2DData {
 		Ref<VertexArray> vertexArray;
 		Ref<Shader> shader;
-		Ref<Shader> textureShader;
+		Ref<Texture> whiteTexture;
 	};
 
 	static Renderer2DData* Data;
@@ -40,10 +40,12 @@ namespace XEON {
 		Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t));
 		Data->vertexArray->setIndexBuffer(indexBuffer);
 
-		Data->shader = Shader::Create("assets/shaders/flat_color.glsl");
-		Data->textureShader = Shader::Create("assets/shaders/texture.glsl");
-		Data->textureShader->bind();
-		Data->textureShader->setInt("u_Texture", 0);
+		Data->shader = Shader::Create("assets/shaders/2d_renderer.glsl");
+		Data->shader->bind();
+		Data->shader->setInt("u_Texture", 0);
+
+		uint32_t color = 0XFFFFFFFF;
+		Data->whiteTexture = Texture2D::Create(1, 1, &color, 4, 4);
 	}
 
 	void Renderer2D::Shutdown() {
@@ -53,8 +55,6 @@ namespace XEON {
 	void Renderer2D::BeginScene(OrthographicCamera& camera) {
 		Data->shader->bind();
 		Data->shader->setMat4("u_ViewProjection", camera.getViewProjectionMatrix());
-		Data->textureShader->bind();
-		Data->textureShader->setMat4("u_ViewProjection", camera.getViewProjectionMatrix());
 	}
 
 	void Renderer2D::EndScene() {
@@ -67,11 +67,12 @@ namespace XEON {
 
 	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, float rotation) {
 		constexpr glm::mat4 identity(1.0F);
-		Data->shader->bind();
 		Data->shader->setMat4("u_Transform", 
 			glm::translate(identity, position) * glm::rotate(identity, rotation, glm::vec3 { 0.0F, 0.0F, 1.0F }) * glm::scale(identity, glm::vec3(size, 1.0F))
 		);
 		Data->shader->setFloat4("u_Color", color);
+		Data->whiteTexture->bind();
+
 		Data->vertexArray->bind();
 		RenderCommand::DrawIndexed(Data->vertexArray);
 	}
@@ -82,12 +83,13 @@ namespace XEON {
 
 	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture>& texture, float rotation) {
 		constexpr glm::mat4 identity(1.0F);
-		Data->textureShader->bind();
-		Data->textureShader->setMat4("u_Transform",
+		Data->shader->setMat4("u_Transform",
 			glm::translate(identity, position) * glm::rotate(identity, rotation, glm::vec3{ 0.0F, 0.0F, 1.0F }) * glm::scale(identity, glm::vec3(size, 1.0F))
 		);
-		Data->textureShader->setInt("u_Texture", 0);
+		constexpr glm::vec4 color(1.0F);
+		Data->shader->setFloat4("u_Color", color);
 		texture->bind(0);
+		
 		Data->vertexArray->bind();
 		RenderCommand::DrawIndexed(Data->vertexArray);
 	}

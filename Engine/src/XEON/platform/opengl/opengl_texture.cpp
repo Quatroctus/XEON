@@ -6,7 +6,26 @@
 #include <glad/glad.h>
 
 namespace XEON {
+	
+	OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height, void* data, uint32_t channels, size_t size) : width(width), height(height) {
+		if (channels == 3) {
+			internalFormat = GL_RGB8;
+			dataFormat = GL_RGB;
+		} else if (channels == 4) {
+			internalFormat = GL_RGBA8;
+			dataFormat = GL_RGBA;
+		}
 
+		XEON_ASSERT(internalFormat & dataFormat, "Format not supported.");
+
+		glCreateTextures(GL_TEXTURE_2D, 1, &rendererID);
+		glTextureStorage2D(rendererID, 1, internalFormat, width, height);
+
+		glTextureParameteri(rendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTextureParameteri(rendererID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+		if (data) setData(data, size);
+	}
 	OpenGLTexture2D::OpenGLTexture2D(const std::string& path) : path(path) {
 		int width, height, channels;
 		stbi_set_flip_vertically_on_load(true);
@@ -15,7 +34,8 @@ namespace XEON {
 		this->width = width;
 		this->height = height;
 
-		GLenum internalFormat = 0, dataFormat = 0;
+		internalFormat = 0;
+		dataFormat = 0;
 		if (channels == 4) {
 			internalFormat = GL_RGBA8;
 			dataFormat = GL_RGBA;
@@ -42,6 +62,12 @@ namespace XEON {
 
 	void OpenGLTexture2D::bind(uint32_t slot) const {
 		glBindTextureUnit(slot, rendererID);
+	}
+
+	void OpenGLTexture2D::setData(void* data, size_t size) const {
+		const uint32_t channels = dataFormat == GL_RGB ? 3 : dataFormat == GL_RGBA ? 4 : 1;
+		XEON_ASSERT(size == width * height * channels, "Data size does not match data format or width and height.");
+		glTextureSubImage2D(rendererID, 0, 0, 0, this->width, this->height, dataFormat, GL_UNSIGNED_BYTE, data);
 	}
 
 }
