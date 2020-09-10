@@ -53,6 +53,8 @@
 #define APP_ASSERT(x, ...)
 #endif
 
+#define XEON_PROFILER 1
+
 #define BIT(x) (1 << x)
 
 #define XEON_BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)
