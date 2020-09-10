@@ -19,3 +19,6 @@
 *.sln
 /Engine/vendor/glad/bin/Debug32-windows-x86/glad
 /Libraries/Vulkan
+/Sandbox/XEON_Profile-Startup.json
+/Sandbox/XEON_Profile-Shutdown.json
+/Sandbox/XEON_Profile-Runtime.json
