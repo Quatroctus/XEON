@@ -40,30 +40,40 @@ void Sandbox2D::onUpdate(XEON::Timestep delta) {
 		}
 	} else consistency = 0;
 	*/
-	cameraController.onUpdate(delta);
-	XEON::RenderCommand::SetClearColor(glm::vec4{ 0.1F, 0.1F, 0.1F, 1.0F });
-	XEON::RenderCommand::Clear();
-
-	XEON::Renderer2D::BeginScene(cameraController.getCamera());
+	XEON_PROFILE_FN();
 	{
-		// Single Square Draw call test.
-		/*
-		for (float x = 0.0F; x < tileMapSize.x; x++) {
-			for (float y = 0.0F; y < tileMapSize.y; y++) {
-				XEON::Renderer2D::DrawQuad(glm::vec2{ 0.26F * x, 0.26F * y }, glm::vec2{ 0.25F, 0.25F }, squareColor);
-			}
-		}
-		*/
-		XEON::Renderer2D::DrawQuad(glm::vec2{ 1.0F, 1.0F }, glm::vec2{ 1.0F, 1.0F }, texture);
-		XEON::Renderer2D::DrawQuad(glm::vec2{ 0.0F, 0.0F }, glm::vec2{ 0.25F, 0.25F }, squareColor);
+		XEON_PROFILE_SCOPE("Camera_Controller::onUpdate");
+		cameraController.onUpdate(delta);
 	}
-	XEON::Renderer2D::EndScene();
-	
+		
+	{
+		XEON_PROFILE_SCOPE("Renderer Prep");
+		XEON::RenderCommand::SetClearColor(glm::vec4{ 0.1F, 0.1F, 0.1F, 1.0F });
+		XEON::RenderCommand::Clear();
+	}
+	{
+		XEON_PROFILE_SCOPE("Renderer Draw");
+		XEON::Renderer2D::BeginScene(cameraController.getCamera());
+		{
+			// Single Square Draw call test.
+			/*
+			for (float x = 0.0F; x < tileMapSize.x; x++) {
+				for (float y = 0.0F; y < tileMapSize.y; y++) {
+					XEON::Renderer2D::DrawQuad(glm::vec2{ 0.26F * x, 0.26F * y }, glm::vec2{ 0.25F, 0.25F }, squareColor);
+				}
+			}
+			*/
+			XEON::Renderer2D::DrawQuad(glm::vec2{ 1.0F, 1.0F }, glm::vec2{ 1.0F, 1.0F }, texture);
+			XEON::Renderer2D::DrawQuad(glm::vec2{ 0.0F, 0.0F }, glm::vec2{ 0.25F, 0.25F }, squareColor);
+		}
+		XEON::Renderer2D::EndScene();
+	}
 	// tileMapSize += growthRate * delta;
 
 }
 
 void Sandbox2D::onImGuiRender() {
+	XEON_PROFILE_FN();
 	ImGui::Begin("Settings");
 	{
 		ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
