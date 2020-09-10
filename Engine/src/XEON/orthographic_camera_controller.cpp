@@ -36,9 +36,9 @@ namespace XEON {
 
 		if (rotation) {
 			if (Input::isKeyPressed(XEON_KEY_Q))
-				cameraRotation = wrap(cameraRotation - (data.rotationSpeed * delta), data.minRotation, data.maxRotation);
-			if (Input::isKeyPressed(XEON_KEY_E))
 				cameraRotation = wrap(cameraRotation + (data.rotationSpeed * delta), data.minRotation, data.maxRotation);
+			if (Input::isKeyPressed(XEON_KEY_E))
+				cameraRotation = wrap(cameraRotation - (data.rotationSpeed * delta), data.minRotation, data.maxRotation);
 
 			camera.setRotation(cameraRotation);
 		}
