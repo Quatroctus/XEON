@@ -10,13 +10,13 @@ namespace XEON {
 	Application* Application::Instance = nullptr;
 
 	Application::Application(ApplicationData data) : applicationData(data) {
+		XEON_PROFILE_FN();
 		XEON_ASSERT(!Instance, "Application already exists.");
 		Instance = this;
 		Log::Init(data.loggerName);
 		// TODO: Provide Window Data to Window::Create.
 		window = Window::Create();
 		window->setEventCallback(XEON_BIND_EVENT_FN(Application::onEvent));
-		window->setVSync(false);
 
 		Renderer::Init();
 
@@ -24,21 +24,32 @@ namespace XEON {
 		pushOverlay(imguiLayer);
 	}
 
-	Application::~Application() { }
+	Application::~Application() {
+		XEON_PROFILE_FN();
+	}
 
 	void Application::run() {
+		XEON_PROFILE_FN();
+
 		while (running) {
+			XEON_PROFILE_SCOPE("RunLoop");
 			float time = (float) glfwGetTime();
 			Timestep timestep = time - lastFrameTime;
 			lastFrameTime = time;
 
 			if (!minimized) {
-				for (Layer* layer : layerStack) layer->onUpdate(timestep);
+				{
+					XEON_PROFILE_SCOPE("LayerStack Update");
+					for (Layer* layer : layerStack) layer->onUpdate(timestep);
+				}
+				imguiLayer->begin();
+				{
+					XEON_PROFILE_SCOPE("LayerStack ImGui Update");
+					for (Layer* layer : layerStack) layer->onImGuiRender();
+				}
+				imguiLayer->end();
 			}
 
-			imguiLayer->begin();
-			for (Layer* layer : layerStack) layer->onImGuiRender();
-			imguiLayer->end();
 
 			window->onUpdate();
 		}
@@ -55,11 +66,15 @@ namespace XEON {
 	}
 
 	void Application::pushLayer(Layer* layer) {
+		XEON_PROFILE_FN();
 		layerStack.pushLayer(layer);
+		layer->onAttach();
 	}
 
 	void Application::pushOverlay(Layer* overlay) {
+		XEON_PROFILE_FN();
 		layerStack.pushOverlay(overlay);
+		overlay->onAttach();
 	}
 
 	bool Application::onWindowClose(WindowCloseEvent& e) {
@@ -68,6 +83,8 @@ namespace XEON {
 	}
 
 	bool Application::onWindowResize(WindowResizeEvent& e) {
+		XEON_PROFILE_FN();
+
 		if (e.getWidth() == 0 || e.getHeight() == 0) {
 			minimized = true;
 			return false;

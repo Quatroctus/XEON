@@ -24,23 +24,29 @@ namespace XEON {
 	}
 
 	OpenGLVertexArray::OpenGLVertexArray() {
+		XEON_PROFILE_FN();
 		glCreateVertexArrays(1, &rendererID);
 	}
 
 	OpenGLVertexArray::~OpenGLVertexArray() {
+		XEON_PROFILE_FN();
 		glDeleteVertexArrays(1, &rendererID);
 	}
 
 	void OpenGLVertexArray::bind() const {
+		XEON_PROFILE_FN();
 		glBindVertexArray(rendererID);
 		
 	}
 
 	void OpenGLVertexArray::unbind() const {
+		XEON_PROFILE_FN();
 		glBindVertexArray(0);
 	}
 
 	void OpenGLVertexArray::addVertexBuffer(const Ref<VertexBuffer>& vertexBuffer) {
+		XEON_PROFILE_FN();
+
 		glBindVertexArray(rendererID);
 		vertexBuffer->bind();
 		uint32_t index = 0;
@@ -55,6 +61,8 @@ namespace XEON {
 	}
 
 	void OpenGLVertexArray::setIndexBuffer(const Ref<IndexBuffer>& indexBuffer) {
+		XEON_PROFILE_FN();
+
 		glBindVertexArray(rendererID);
 		indexBuffer->bind();
 		this->indexBuffer = indexBuffer;

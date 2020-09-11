@@ -1,13 +1,24 @@
 #include "xeonpch.h"
 
 #include "XEON/renderer/renderer.h"
+#include "XEON/renderer/renderer_2d.h"
 
 namespace XEON {
 
 	Scope<Renderer::SceneData> Renderer::Data = CreateScope<Renderer::SceneData>();
 
 	void Renderer::Init() {
+		XEON_PROFILE_FN();
+
 		RenderCommand::Init();
+		Renderer2D::Init();
+	}
+
+	void Renderer::Shutdown() {
+		XEON_PROFILE_FN();
+
+		RenderCommand::Shutdown();
+		Renderer2D::Shutdown();
 	}
 
 	void Renderer::OnWindowResize(uint32_t width, uint32_t height) {

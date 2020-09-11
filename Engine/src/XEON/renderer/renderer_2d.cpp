@@ -20,6 +20,8 @@ namespace XEON {
 	static Renderer2DData* Data;
 
 	void Renderer2D::Init() {
+		XEON_PROFILE_FN();
+
 		Data = new Renderer2DData();
 		Data->vertexArray = VertexArray::Create();
 		
@@ -44,20 +46,27 @@ namespace XEON {
 		Data->shader->bind();
 		Data->shader->setInt("u_Texture", 0);
 
-		uint32_t color = 0XFFFFFFFF;
-		Data->whiteTexture = Texture2D::Create(1, 1, &color, 4, 4);
+		// Optimization for old graphics cards. Creates a 16x16 white texture.
+		uint32_t color[256];
+		std::memset(color, 0xFFFFFFFF, 1024);
+		Data->whiteTexture = Texture2D::Create(16, 16, color, 4, 1024);
 	}
 
 	void Renderer2D::Shutdown() {
+		XEON_PROFILE_FN();
+
 		delete Data;
 	}
 
 	void Renderer2D::BeginScene(OrthographicCamera& camera) {
+		XEON_PROFILE_FN();
+
 		Data->shader->bind();
 		Data->shader->setMat4("u_ViewProjection", camera.getViewProjectionMatrix());
 	}
 
 	void Renderer2D::EndScene() {
+		XEON_PROFILE_FN();
 //		Data->shader->unbind();
 	}
 
@@ -66,6 +75,8 @@ namespace XEON {
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, float rotation) {
+		XEON_PROFILE_FN();
+
 		constexpr glm::mat4 identity(1.0F);
 		Data->shader->setMat4("u_Transform", 
 			glm::translate(identity, position) * glm::rotate(identity, rotation, glm::vec3 { 0.0F, 0.0F, 1.0F }) * glm::scale(identity, glm::vec3(size, 1.0F))
@@ -82,6 +93,8 @@ namespace XEON {
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture>& texture, float rotation) {
+		XEON_PROFILE_FN();
+
 		constexpr glm::mat4 identity(1.0F);
 		Data->shader->setMat4("u_Transform",
 			glm::translate(identity, position) * glm::rotate(identity, rotation, glm::vec3{ 0.0F, 0.0F, 1.0F }) * glm::scale(identity, glm::vec3(size, 1.0F))

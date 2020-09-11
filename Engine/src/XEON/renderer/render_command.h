@@ -7,6 +7,7 @@ namespace XEON {
 	class RenderCommand {
 	public:
 		inline static void Init() { rendererAPI->init(); }
+		inline static void Shutdown() { rendererAPI->shutdown(); }
 		inline static void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) { rendererAPI->setViewport(x, y, width, height); }
 
 		// inline static void RenderCommand::SetClearColor(float r, float g, float b, float a) { rendererAPI->setClearColor(r, g, b, a); }

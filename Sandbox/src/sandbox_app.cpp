@@ -132,6 +132,7 @@ public:
 	Sandbox() : Application({ "Sandbox" }) {
 		//pushLayer(new SandboxLayer());
 		pushLayer(new Sandbox2D());
+		pushLayer(new XEON::InstrumentorLayer());
 	}
 
 	~Sandbox() {}

@@ -15,6 +15,8 @@
 
 #include "XEON/core/log.h"
 
+#include "XEON/debug/instrumentor.h"
+
 #ifdef XEON_PLATFORM_WINDOWS
 	#include <Windows.h>
 #endif

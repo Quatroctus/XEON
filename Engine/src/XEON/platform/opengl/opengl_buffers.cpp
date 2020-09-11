@@ -7,6 +7,8 @@
 namespace XEON {
 	
 	OpenGLVertexBuffer::OpenGLVertexBuffer(float* vertices, uint32_t size) {
+		XEON_PROFILE_FN();
+
 		glCreateBuffers(1, &rendererID);
 		glBindBuffer(GL_ARRAY_BUFFER, rendererID);
 		glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
@@ -14,14 +16,17 @@ namespace XEON {
 	}
 
 	OpenGLVertexBuffer::~OpenGLVertexBuffer() {
+		XEON_PROFILE_FN();
 		glDeleteBuffers(1, &rendererID);
 	}
 
 	void OpenGLVertexBuffer::bind() const {
+		XEON_PROFILE_FN();
 		glBindBuffer(GL_ARRAY_BUFFER, rendererID);
 	}
 
 	void OpenGLVertexBuffer::unbind() const {
+		XEON_PROFILE_FN();
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
@@ -34,25 +39,28 @@ namespace XEON {
 	// -------------------------------------------------------------------------------- //
 
 	OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t* indices, uint32_t count) : count(count) {
+		XEON_PROFILE_FN();
+
 		glCreateBuffers(1, &rendererID);
 		glBindBuffer(GL_ARRAY_BUFFER, rendererID);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(uint32_t) * count, indices, GL_STATIC_DRAW);
 	}
 
 	OpenGLIndexBuffer::~OpenGLIndexBuffer() {
+		XEON_PROFILE_FN();
 		glDeleteBuffers(1, &rendererID);
 	}
 
 	void OpenGLIndexBuffer::bind() const {
+		XEON_PROFILE_FN();
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rendererID);
 	}
 
 	void OpenGLIndexBuffer::unbind() const {
+		XEON_PROFILE_FN();
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 
-	inline uint32_t OpenGLIndexBuffer::getCount() const {
-		return count;
-	}
+	inline uint32_t OpenGLIndexBuffer::getCount() const { return count; }
 
 }

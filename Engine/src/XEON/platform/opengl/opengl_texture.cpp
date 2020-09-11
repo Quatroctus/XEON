@@ -8,6 +8,8 @@
 namespace XEON {
 	
 	OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height, void* data, uint32_t channels, size_t size) : width(width), height(height) {
+		XEON_PROFILE_FN();
+
 		if (channels == 3) {
 			internalFormat = GL_RGB8;
 			dataFormat = GL_RGB;
@@ -27,9 +29,15 @@ namespace XEON {
 		if (data) setData(data, size);
 	}
 	OpenGLTexture2D::OpenGLTexture2D(const std::string& path) : path(path) {
+		XEON_PROFILE_FN();
+
 		int width, height, channels;
 		stbi_set_flip_vertically_on_load(true);
-		stbi_uc* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+		stbi_uc* data = nullptr;
+		{
+			XEON_PROFILE_SCOPE("stbi_load - OpenGLTexture2D::OpenGLTexture2D(const std::string&)");
+			data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+		}
 		XEON_ASSERT(data, "Failed to load image!");
 		this->width = width;
 		this->height = height;
@@ -57,16 +65,23 @@ namespace XEON {
 	}
 
 	OpenGLTexture2D::~OpenGLTexture2D() {
+		XEON_PROFILE_FN();
+
 		glDeleteTextures(1, &rendererID);
 	}
 
 	void OpenGLTexture2D::bind(uint32_t slot) const {
+		XEON_PROFILE_FN();
 		glBindTextureUnit(slot, rendererID);
 	}
 
 	void OpenGLTexture2D::setData(void* data, size_t size) const {
-		const uint32_t channels = dataFormat == GL_RGB ? 3 : dataFormat == GL_RGBA ? 4 : 1;
-		XEON_ASSERT(size == width * height * channels, "Data size does not match data format or width and height.");
+		XEON_PROFILE_FN();
+		{
+			XEON_PROFILE_SCOPE("Size Assert - OpenGLTexture2D");
+			const uint32_t channels = dataFormat == GL_RGB ? 3 : dataFormat == GL_RGBA ? 4 : 1;
+			XEON_ASSERT(size == width * height * channels, "Data size does not match data format or width and height.");
+		}
 		glTextureSubImage2D(rendererID, 0, 0, 0, this->width, this->height, dataFormat, GL_UNSIGNED_BYTE, data);
 	}
 

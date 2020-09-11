@@ -10,6 +10,7 @@
 #include <mutex>
 #include <thread>
 
+// TODO: Manage the file type. Maybe we want to write and support different profile tracing types.
 namespace XEON {
 
 	struct ProfileResult {
@@ -20,15 +21,23 @@ namespace XEON {
 
 	class Instrumentor {
 	public:
+		bool log = false, over = false;
+		uint32_t frame = 0;
 		~Instrumentor() { endSession(); }
 
-		void beginSession(const std::string& name, const std::string& filepath = "results.json") {
+		void beginSession(const std::string& name, const std::string& filepath = "results.json", bool forceLog=false) {
+			if (forceLog) {
+				over = (log = true);
+			}
 			outputStream.open(filepath);
 			writeHeader();
 			currentSession = name;
 		}
 
-		void endSession() {
+		void endSession(bool reset=true) {
+			if (reset) {
+				over = (log = false);
+			}
 			writeFooter();
 			outputStream.close();
 			profileCount = 0;
@@ -36,6 +45,7 @@ namespace XEON {
 
 		void writeProfile(const ProfileResult& result) {
 			std::lock_guard<std::mutex> lock(lock);
+			if (!log) return;
 
 			if (profileCount++ > 0)
 				outputStream << ",";
@@ -107,10 +117,12 @@ namespace XEON {
 }
 #if XEON_PROFILER
 	#define XEON_PROFILE_BEGIN_SESSION(name, filepath) XEON::Instrumentor::Get().beginSession(name, filepath)
+	#define XEON_PROFILE_BEGIN_SESSION_OVERRIDE(name, filepath) XEON::Instrumentor::Get().beginSession(name, filepath, true)
 	#define XEON_PROFILE_SCOPE(name) XEON::InstrumentationTimer timer##__LINE__(name);
 	#define XEON_PROFILE_FN() XEON_PROFILE_SCOPE(__FUNCSIG__)
 	#define XEON_PROFILE_END_SESSION() XEON::Instrumentor::Get().endSession()
 	#define XEON_PROFILE_BEGIN_NEW_SESSION(name, filepath) XEON_PROFILE_END_SESSION(); XEON_PROFILE_BEGIN_SESSION(name, filepath)
+	#define XEON_PROFILE_BEGIN_NEW_SESSION_OVERRIDE(name, filepath) XEON_PROFILE_END_SESSION(); XEON_PROFILE_BEGIN_SESSION_OVERRIDE(name, filepath)
 #else
 	#define XEON_PROFILE_BEGIN_SESSION(name, filepath)
 	#define XEON_PROFILE_FN()

@@ -7,6 +7,7 @@
 // ------------- Log ----------------
 #include "XEON/core/log.h"
 #include "XEON/debug/instrumentor.h"
+#include "XEON/debug/instrumentor_layer.h"
 // ----------------------------------
 
 // ----------------------------------

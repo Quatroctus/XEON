@@ -16,6 +16,8 @@ namespace XEON {
 	}
 
 	static GLint createShader(const char* const src, GLuint& shader, GLint shaderType) {
+		XEON_PROFILE_FN();
+
 		shader = glCreateShader(shaderType);
 		glShaderSource(shader, 1, &src, 0);
 		glCompileShader(shader);
@@ -34,6 +36,8 @@ namespace XEON {
 	}
 
 	OpenGLShader::OpenGLShader(const std::string& path) {
+		XEON_PROFILE_FN();
+
 		compile(preProcess(readFile(path)));
 		auto lastSlash = path.find_last_of("/\\");
 		lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
@@ -43,6 +47,8 @@ namespace XEON {
 	}
 
 	OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc) : name(name) {
+		XEON_PROFILE_FN();
+
 		std::unordered_map<GLenum, std::string> sources;
 		sources[GL_VERTEX_SHADER] = vertexSrc;
 		sources[GL_FRAGMENT_SHADER] = fragmentSrc;
@@ -50,45 +56,56 @@ namespace XEON {
 	}
 
 	OpenGLShader::~OpenGLShader() {
+		XEON_PROFILE_FN();
 		glDeleteProgram(rendererID);
 	}
 
 	void OpenGLShader::bind() const {
+		XEON_PROFILE_FN();
 		glUseProgram(rendererID);
 	}
 
 	void OpenGLShader::unbind() const {
+		XEON_PROFILE_FN();
 		glUseProgram(0);
 	}
 
 	void OpenGLShader::setFloat(const std::string& name, float f) const {
+		XEON_PROFILE_FN();
 		uploadUniformFloat(name, f);
 	}
 	void OpenGLShader::setFloat2(const std::string& name, glm::vec2 vec) const {
+		XEON_PROFILE_FN();
 		uploadUniformFloat2(name, vec);
 	}
 	
 	void OpenGLShader::setFloat3(const std::string& name, glm::vec3 vec) const {
+		XEON_PROFILE_FN();
 		uploadUniformFloat3(name, vec);
 	}
 	
 	void OpenGLShader::setFloat4(const std::string& name, glm::vec4 vec) const {
+		XEON_PROFILE_FN();
 		uploadUniformFloat4(name, vec);
 	}
 	
 	void OpenGLShader::setMat3(const std::string& name, const glm::mat3& matrix) const {
+		XEON_PROFILE_FN();
 		uploadUniformMat3(name, matrix);
 	}
 	
 	void OpenGLShader::setMat4(const std::string& name, const glm::mat4& matrix) const {
+		XEON_PROFILE_FN();
 		uploadUniformMat4(name, matrix);
 	}
 	
 	void OpenGLShader::setInt(const std::string& name, int i) const {
+		XEON_PROFILE_FN();
 		uploadUniformInt(name, i);
 	}
 	
 	void OpenGLShader::setIntArray(const std::string& name, int* array, uint32_t count) const {
+		XEON_PROFILE_FN();
 		uploadUniformIntArray(name, array, count);
 	}
 
@@ -133,6 +150,8 @@ namespace XEON {
 	}
 
 	std::string OpenGLShader::readFile(const std::string& path) {
+		XEON_PROFILE_FN();
+
 		std::string result;
 		std::ifstream in(path, std::ios::in | std::ios::binary);
 		if (in) {
@@ -148,6 +167,8 @@ namespace XEON {
 	}
 
 	std::unordered_map<GLenum, std::string> OpenGLShader::preProcess(const std::string& src) {
+		XEON_PROFILE_FN();
+
 		std::unordered_map<GLenum, std::string> shaderSources;
 		constexpr char* typeToken = "#type";
 		constexpr size_t typeTokenLength = 5;
@@ -169,6 +190,8 @@ namespace XEON {
 	}
 
 	void OpenGLShader::compile(const std::unordered_map<GLenum, std::string>& shaderSrcs) {
+		XEON_PROFILE_FN();
+
 		GLuint program = glCreateProgram();
 		int index = 0;
 		std::array<GLenum, 3> shaderIDs;
@@ -181,29 +204,31 @@ namespace XEON {
 		}
 		rendererID = program;
 
-		glLinkProgram(rendererID);
+		{
+			XEON_PROFILE_SCOPE("Linking Shaders to Program - OpenGLShader");
+			glLinkProgram(rendererID);
 
-		GLint isLinked = 0;
-		glGetProgramiv(program, GL_LINK_STATUS, (int*)&isLinked);
-		if (!isLinked) {
-			GLint maxLength = 0;
-			glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
-			std::vector<GLchar> infoLog(maxLength);
-			glGetProgramInfoLog(program, maxLength, &maxLength, &infoLog[0]);
+			GLint isLinked = 0;
+			glGetProgramiv(program, GL_LINK_STATUS, (int*)&isLinked);
+			if (!isLinked) {
+				GLint maxLength = 0;
+				glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
+				std::vector<GLchar> infoLog(maxLength);
+				glGetProgramInfoLog(program, maxLength, &maxLength, &infoLog[0]);
 
-			glDeleteProgram(program);
+				glDeleteProgram(program);
 
-			for (int i = 0; i < index; i++)
+				for (int i = 0; i < index; i++)
+					glDeleteShader(shaderIDs[i]);
+
+				XEON_ERROR("{0}", infoLog.data());
+				XEON_ASSERT(false, "Program was unable to link Shaders.");
+				return;
+			}
+			for (int i = 0; i < index; i++) {
+				glDetachShader(program, shaderIDs[i]);
 				glDeleteShader(shaderIDs[i]);
-
-			XEON_ERROR("{0}", infoLog.data());
-			XEON_ASSERT(false, "Program was unable to link Shaders.");
-			return;
-		}
-		for (int i = 0; i < index; i++) {
-			glDetachShader(program, shaderIDs[i]);
-			glDeleteShader(shaderIDs[i]);
+			}
 		}
 	}
-
 }

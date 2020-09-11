@@ -10,6 +10,8 @@ namespace XEON {
 	OpenGLContext::OpenGLContext(GLFWwindow* window) : window(window) { }
 
 	void OpenGLContext::init() {
+		XEON_PROFILE_FN();
+
 		glfwMakeContextCurrent(window);
 		int status = gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
 		XEON_ASSERT(status, "Failed to initlaize Glad!");
@@ -26,6 +28,7 @@ namespace XEON {
 	}
 
 	void OpenGLContext::swapBuffers() {
+		XEON_PROFILE_FN();
 		glfwSwapBuffers(window);
 	}
 

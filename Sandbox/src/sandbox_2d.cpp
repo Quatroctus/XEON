@@ -11,12 +11,12 @@ Sandbox2D::Sandbox2D() : Layer("Sandbox2D"), cameraController(16.0F/9.0F, true) 
 Sandbox2D::~Sandbox2D() {}
 
 void Sandbox2D::onAttach() {
-	XEON::Renderer2D::Init();
+	XEON_PROFILE_FN();
 	texture = XEON::Texture2D::Create("assets/textures/checkerboard.png");
 }
 
 void Sandbox2D::onDetach() {
-	XEON::Renderer2D::Shutdown();
+	XEON_PROFILE_FN();
 	texture = nullptr;
 }
 
@@ -41,10 +41,8 @@ void Sandbox2D::onUpdate(XEON::Timestep delta) {
 	} else consistency = 0;
 	*/
 	XEON_PROFILE_FN();
-	{
-		XEON_PROFILE_SCOPE("Camera_Controller::onUpdate");
-		cameraController.onUpdate(delta);
-	}
+
+	cameraController.onUpdate(delta);
 		
 	{
 		XEON_PROFILE_SCOPE("Renderer Prep");

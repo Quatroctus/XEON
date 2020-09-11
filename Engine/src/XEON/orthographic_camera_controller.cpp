@@ -12,6 +12,8 @@ namespace XEON {
 		: rotation(rotation), aspectRatio(aspectRatio), camera(-aspectRatio * zoomLevel, aspectRatio * zoomLevel, -zoomLevel, zoomLevel), data(data) { }
 
 	void OrthographicCameraController::onUpdate(Timestep delta) {
+		XEON_PROFILE_FN();
+
 		const float move = data.movementSpeed * delta;
 		const float cosMove = std::cosf(glm::radians(cameraRotation)) * move;
 		const float sinMove = std::sinf(glm::radians(cameraRotation)) * move;
@@ -45,12 +47,16 @@ namespace XEON {
 	}
 
 	void OrthographicCameraController::onEvent(Event& e) {
+		XEON_PROFILE_FN();
+
 		EventDispatcher dispatcher(e);
 		dispatcher.dispatch<MouseScrolledEvent>(XEON_BIND_EVENT_FN(OrthographicCameraController::onMouseScrolled));
 		dispatcher.dispatch<WindowResizeEvent>(XEON_BIND_EVENT_FN(OrthographicCameraController::onWindowResized));
 	}
 
 	bool OrthographicCameraController::onMouseScrolled(MouseScrolledEvent& e) {
+		XEON_PROFILE_FN();
+
 		zoomLevel -= e.getYOffset() * data.zoomSpeed;
 		zoomLevel = std::clamp(zoomLevel, data.zoomMin, data.zoomMax);
 		camera.setProjection(-aspectRatio * zoomLevel, aspectRatio * zoomLevel, -zoomLevel, zoomLevel);
@@ -58,6 +64,8 @@ namespace XEON {
 	}
 
 	bool OrthographicCameraController::onWindowResized(WindowResizeEvent& e) {
+		XEON_PROFILE_FN();
+
 		aspectRatio = (float) e.getWidth() / (float) e.getHeight();
 		camera.setProjection(-aspectRatio * zoomLevel, aspectRatio * zoomLevel, -zoomLevel, zoomLevel);
 		return false;
