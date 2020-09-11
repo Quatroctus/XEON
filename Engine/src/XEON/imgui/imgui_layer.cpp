@@ -9,7 +9,6 @@
 
 // TEMP
 #include <GLFW/glfw3.h>
-#include <glad/glad.h>
 
 namespace XEON {
 
@@ -18,6 +17,8 @@ namespace XEON {
 	ImGuiLayer::~ImGuiLayer() {}
 
 	void ImGuiLayer::onAttach() {
+		XEON_PROFILE_FN();
+
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO();
@@ -42,18 +43,23 @@ namespace XEON {
 	}
 
 	void ImGuiLayer::onDetach() {
+		XEON_PROFILE_FN();
+
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();
 	}
 
 	void ImGuiLayer::begin() {
+		XEON_PROFILE_FN();
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 	}
 
 	void ImGuiLayer::end() {
+		XEON_PROFILE_FN();
+
 		ImGuiIO& io = ImGui::GetIO();
 		Application& app = Application::Get();
 		io.DisplaySize = ImVec2((float) app.getWindow().getWidth(), (float) app.getWindow().getHeight());
