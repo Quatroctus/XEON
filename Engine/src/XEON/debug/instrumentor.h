@@ -6,26 +6,32 @@
 #include <chrono>
 #include <algorithm>
 #include <fstream>
-
+#include <sstream>
+#include <iomanip>
 #include <mutex>
 #include <thread>
 
 // TODO: Manage the file type. Maybe we want to write and support different profile tracing types.
 namespace XEON {
 
+	using FloatingPointMicroseconds = std::chrono::duration<double, std::micro>;
+
 	struct ProfileResult {
 		std::string name;
-		long long start, end;
-		uint64_t threadID;
+		FloatingPointMicroseconds start;
+		std::chrono::microseconds elapsedTime;
+		std::thread::id threadID;
 	};
 
 	class Instrumentor {
 	public:
 		bool log = false, over = false;
 		uint32_t frame = 0;
-		~Instrumentor() { endSession(); }
+		Instrumentor(const Instrumentor&) = delete;
+		Instrumentor(Instrumentor&&) = delete;
 
 		void beginSession(const std::string& name, const std::string& filepath = "results.json", bool forceLog=false) {
+			std::lock_guard<std::mutex> lock(lock); 
 			if (forceLog) {
 				over = (log = true);
 			}
@@ -35,6 +41,7 @@ namespace XEON {
 		}
 
 		void endSession(bool reset=true) {
+			std::lock_guard<std::mutex> lock(lock);
 			if (reset) {
 				over = (log = false);
 			}
@@ -47,27 +54,25 @@ namespace XEON {
 			std::lock_guard<std::mutex> lock(lock);
 			if (!log) return;
 
-			if (profileCount++ > 0)
-				outputStream << ",";
+			std::stringstream json;
 
-			std::string name = result.name;
-			std::replace(name.begin(), name.end(), '"', '\'');
-
-			outputStream << "{";
-			outputStream << "\"cat\":\"function\",";
-			outputStream << "\"dur\":" << (result.end - result.start) << ',';
-			outputStream << "\"name\":\"" << name << "\",";
-			outputStream << "\"ph\":\"X\",";
-			outputStream << "\"pid\":0,";
-			outputStream << "\"tid\":" << result.threadID << ",";
-			outputStream << "\"ts\":" << result.start;
-			outputStream << "}";
-
+			json << std::setprecision(3) << std::fixed;
+			json << ",{";
+			json << "\"cat\":\"function\",";
+			json << "\"dur\":" << (result.elapsedTime.count()) << ',';
+			json << "\"name\":\"" << result.name << "\",";
+			json << "\"ph\":\"X\",";
+			json << "\"pid\":0,";
+			json << "\"tid\":" << result.threadID << ",";
+			json << "\"ts\":" << result.start.count();
+			json << "}";
+			
+			outputStream << json.str();
 			//outputStream.flush();
 		}
 
 		void writeHeader() {
-			outputStream << "{\"otherData\": {},\"traceEvents\":[";
+			outputStream << "{\"otherData\": {},\"traceEvents\":[{}";
 			//outputStream.flush();
 		}
 
@@ -86,13 +91,15 @@ namespace XEON {
 		std::ofstream outputStream;
 		int profileCount = 0;
 		std::mutex lock;
+		Instrumentor() = default;
+		~Instrumentor() { endSession(); }
 
 	};
 
 	class InstrumentationTimer {
 	public:
 		explicit InstrumentationTimer(const char* name)
-			: startTimePoint(std::chrono::high_resolution_clock::now()), result({name, 0, 0, 0}) {}
+			: startTimePoint(std::chrono::high_resolution_clock::now()), result({ name, {}, {}, std::this_thread::get_id() }) {}
 
 		~InstrumentationTimer() {
 			if (!stopped) stop();
@@ -100,10 +107,10 @@ namespace XEON {
 
 		void stop() {
 			auto endTimepoint = std::chrono::high_resolution_clock::now();
-		
-			result.start = std::chrono::time_point_cast<std::chrono::microseconds>(startTimePoint).time_since_epoch().count();
-			result.end = std::chrono::time_point_cast<std::chrono::microseconds>(endTimepoint).time_since_epoch().count();
-			result.threadID = std::hash<std::thread::id>{}(std::this_thread::get_id());
+			
+			result.start = FloatingPointMicroseconds { startTimePoint.time_since_epoch() };
+			result.elapsedTime = std::chrono::time_point_cast<std::chrono::microseconds>(endTimepoint).time_since_epoch() - std::chrono::time_point_cast<std::chrono::microseconds>(startTimePoint).time_since_epoch();
+			result.threadID = std::this_thread::get_id();
 
 			Instrumentor::Get().writeProfile(result);
 			stopped = true;
