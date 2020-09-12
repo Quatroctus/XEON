@@ -20,14 +20,15 @@ void Sandbox2D::onDetach() {
 	texture = nullptr;
 }
 
-/* Profiling data.
+// Profiling data.
 int consistency = 0;
 int frames = 0;
 float frameTimes = 1.0F / 60.0F;
-*/
+
 
 void Sandbox2D::onUpdate(XEON::Timestep delta) {
-	/* Profiling test.
+	// Profiling test.
+	
 	if (frames++ < 4) return;
 	if (delta > frameTimes) {
 		APP_TRACE("Timestep({0}) is greater than target({1}) at tile size ({2}, {3}) consistency({4})", delta, frameTimes, tileMapSize.x, tileMapSize.y, consistency);
@@ -39,7 +40,7 @@ void Sandbox2D::onUpdate(XEON::Timestep delta) {
 			consistency++;
 		}
 	} else consistency = 0;
-	*/
+	
 	XEON_PROFILE_FN();
 
 	cameraController.onUpdate(delta);
@@ -54,19 +55,19 @@ void Sandbox2D::onUpdate(XEON::Timestep delta) {
 		XEON::Renderer2D::BeginScene(cameraController.getCamera());
 		{
 			// Single Square Draw call test.
-			/*
+			
 			for (float x = 0.0F; x < tileMapSize.x; x++) {
 				for (float y = 0.0F; y < tileMapSize.y; y++) {
 					XEON::Renderer2D::DrawQuad(glm::vec2{ 0.26F * x, 0.26F * y }, glm::vec2{ 0.25F, 0.25F }, squareColor);
 				}
 			}
-			*/
-			XEON::Renderer2D::DrawQuad(glm::vec2{ 1.0F, 1.0F }, glm::vec2{ 1.0F, 1.0F }, texture);
-			XEON::Renderer2D::DrawQuad(glm::vec2{ 0.0F, 0.0F }, glm::vec2{ 0.25F, 0.25F }, squareColor);
+			
+			//XEON::Renderer2D::DrawQuad(glm::vec3{ 1.0F, 1.0F, -0.1 }, glm::vec2{ 3.0F, 3.0F }, texture, 10.0F);
+			//XEON::Renderer2D::DrawQuad(glm::vec2{ 0.0F, 0.0F }, glm::vec2{ 0.25F, 0.25F }, squareColor);
 		}
 		XEON::Renderer2D::EndScene();
 	}
-	// tileMapSize += growthRate * delta;
+	tileMapSize += growthRate * delta;
 
 }
 
