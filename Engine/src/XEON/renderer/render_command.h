@@ -19,7 +19,7 @@ namespace XEON {
 		// inline static void RenderCommand::Clear(glm::vec3& color) { rendererAPI->clear(color); }
 		// inline static void RenderCommand::Clear(glm::vec4& color) { rendererAPI->clear(color); }
 
-		inline static void RenderCommand::DrawIndexed(const Ref<VertexArray>& vertexArray) { rendererAPI->drawIndexed(vertexArray); }
+		inline static void RenderCommand::DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount=0) { rendererAPI->drawIndexed(vertexArray, indexCount); }
 
 	private:
 		static Scope<RendererAPI> rendererAPI;

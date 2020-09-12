@@ -6,13 +6,20 @@
 
 namespace XEON {
 	
+	OpenGLVertexBuffer::OpenGLVertexBuffer(uint32_t size) {
+		XEON_PROFILE_FN();
+
+		glCreateBuffers(1, &rendererID);
+		glBindBuffer(GL_ARRAY_BUFFER, rendererID);
+		glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
+	}
+	
 	OpenGLVertexBuffer::OpenGLVertexBuffer(float* vertices, uint32_t size) {
 		XEON_PROFILE_FN();
 
 		glCreateBuffers(1, &rendererID);
 		glBindBuffer(GL_ARRAY_BUFFER, rendererID);
 		glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
-
 	}
 
 	OpenGLVertexBuffer::~OpenGLVertexBuffer() {
@@ -28,6 +35,13 @@ namespace XEON {
 	void OpenGLVertexBuffer::unbind() const {
 		XEON_PROFILE_FN();
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
+
+	void OpenGLVertexBuffer::setData(const void* data, uint32_t size) {
+		XEON_PROFILE_FN();
+
+		glBindBuffer(GL_ARRAY_BUFFER, rendererID);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
 	}
 
 	void XEON::OpenGLVertexBuffer::setLayout(const BufferLayout& layout) { this->layout = layout; }

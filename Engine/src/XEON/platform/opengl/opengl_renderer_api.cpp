@@ -15,7 +15,7 @@ namespace XEON {
 	}
 
 	void OpenGLRendererAPI::shutdown() {
-//		XEON_PROFILE_FN();
+		XEON_PROFILE_FN();
 	}
 
 	void OpenGLRendererAPI::setViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) {
@@ -30,8 +30,9 @@ namespace XEON {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
-	void OpenGLRendererAPI::drawIndexed(const Ref<VertexArray>& vertexArray) {
-		glDrawElements(GL_TRIANGLES, vertexArray->getIndexBuffer()->getCount(), GL_UNSIGNED_INT, nullptr);
+	void OpenGLRendererAPI::drawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCount) {
+		if (!indexCount) indexCount = vertexArray->getIndexBuffer()->getCount();
+		glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr);
 	}
 
 }
