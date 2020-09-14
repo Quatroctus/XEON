@@ -7,11 +7,12 @@
 namespace XEON {
 
 	OrthographicCamera::OrthographicCamera(float left, float right, float bottom, float top, float n, float f) 
-		: projectionMatrix(glm::ortho(left, right, bottom, top, n, f)), viewMatrix(1.0F), viewProjectionMatrix(projectionMatrix * viewMatrix), position(glm::vec3(0.0F, 0.0F, 0.0F)) {}
+		: bounds(left, right, bottom, top, n, f), projectionMatrix(glm::ortho(left, right, bottom, top, n, f)), viewMatrix(1.0F), viewProjectionMatrix(projectionMatrix * viewMatrix), position(glm::vec3(0.0F, 0.0F, 0.0F)) {}
 
 	void OrthographicCamera::setProjection(float left, float right, float bottom, float top, float n, float f) {
 		XEON_PROFILE_FN();
 
+		bounds = { left, right, bottom, top, n, f };
 		projectionMatrix = glm::ortho(left, right, bottom, top, n, f);
 		viewProjectionMatrix = projectionMatrix * viewMatrix;
 	}
