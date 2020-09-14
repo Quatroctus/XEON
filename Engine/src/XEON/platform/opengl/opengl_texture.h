@@ -15,6 +15,8 @@ namespace XEON {
 
 		virtual void setData(void* data, size_t size) const override;
 
+		virtual bool operator==(const Texture& other) const override { return rendererID == ((OpenGLTexture2D&) other).rendererID; }
+
 		virtual uint32_t getWidth() const override { return width; }
 		virtual uint32_t getHeight() const override { return height; }
 
