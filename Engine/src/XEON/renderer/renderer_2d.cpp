@@ -148,11 +148,11 @@ namespace XEON {
 		Data.stats.drawCalls++;
 	}
 
-	void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color) {
+	void Renderer2D::DrawQuad(const glm::mat4& transform, const ColorVec& color) {
 		for (int i = 0; i < 4; i++) {
 			Data.quadData.ptr->transform = transform;
 			Data.quadData.ptr->pos = Data.quadData.vertexIdentities[i];
-			Data.quadData.ptr->color = color;
+			Data.quadData.ptr->color = color.rgba;
 			Data.quadData.ptr->texCoord = Data.quadData.textureCoordIdentities[i];
 			Data.quadData.ptr->texIndex = 0;
 			Data.quadData.ptr->tilingFactor = 1.0F;
@@ -185,13 +185,13 @@ namespace XEON {
 		if (Data.quadData.indexCount == Data.quadData.maxIndices) Flush();
 	}
 
-	void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture>& texture, const glm::vec4& tintColor, float tilingFactor) {
+	void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture>& texture, const ColorVec& tintColor, float tilingFactor) {
 		uint32_t textureIndex = GetTextureIndex(texture);
 
 		for (int i = 0; i < 4; i++) {
 			Data.quadData.ptr->transform = transform;
 			Data.quadData.ptr->pos = Data.quadData.vertexIdentities[i];
-			Data.quadData.ptr->color = tintColor;
+			Data.quadData.ptr->color = tintColor.rgba;
 			Data.quadData.ptr->texCoord = Data.quadData.textureCoordIdentities[i];
 			Data.quadData.ptr->texIndex = textureIndex;
 			Data.quadData.ptr->tilingFactor = tilingFactor;
@@ -204,64 +204,54 @@ namespace XEON {
 		if (Data.quadData.indexCount == Data.quadData.maxIndices) Flush();
 	}
 
-	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color) {
-		DrawQuad(glm::vec3(position, 0.0F), size, color);
-	}
+	void Renderer2D::DrawQuad(const glm::mat4& transform, const SubTexture2D& texture, float tilingFactor) {
+		uint32_t textureIndex = GetTextureIndex(texture.getTexture());
 
-	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color) {
-		constexpr glm::mat4 identity(1.0F);
-		static glm::vec4 scale(0.0F, 0.0F, 1.0F, 1.0F);
-		scale.x = size.x; scale.y = size.y;
-		
-		for (int i = 0; i < 4; i++) {
-			Data.quadData.ptr->transform = identity;
-			Data.quadData.ptr->pos = Data.quadData.vertexIdentities[i] * scale + glm::vec4(position, 0.0F);
-			Data.quadData.ptr->color = color;
-			Data.quadData.ptr->texCoord = Data.quadData.textureCoordIdentities[i];
-			Data.quadData.ptr->texIndex = 0;
-			Data.quadData.ptr->tilingFactor = 1.0F;
-			Data.quadData.ptr++;
-		}
-
-		Data.quadData.indexCount += 6;
-		Data.stats.quadCount++;
-
-		if (Data.quadData.indexCount == Data.quadData.maxIndices) Flush();
-	}
-
-	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture>& texture, float tilingFactor) {
-		DrawQuad(glm::vec3(position, 0.0F), size, texture, tilingFactor);
-	}
-
-	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture>& texture, float tilingFactor) {
-		uint32_t textureIndex = GetTextureIndex(texture);
-		PushTexturedQuadVertices(position, size, textureIndex, tilingFactor);
-	}
-
-	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture>& texture, const glm::vec4& tintColor, float tilingFactor) {
-		DrawQuad(glm::vec3(position, 0.0F), size, texture, tintColor, tilingFactor);
-	}
-
-	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture>& texture, const glm::vec4& tintColor, float tilingFactor) {
-		uint32_t textureIndex = GetTextureIndex(texture);
-		PushTexturedQuadVertices(position, size, textureIndex, tilingFactor, tintColor);
-	}
-
-	void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color) {
-		DrawRotatedQuad(glm::vec3(position, 0.0F), size, rotation, color);
-	}
-
-	void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4& color) {
-		constexpr glm::mat4 identity(1.0F);
-		constexpr glm::vec3 rotationVec{ 0.0F, 0.0F, 1.0F };
-		glm::mat4 transform = glm::translate(identity, position);
-		transform = glm::rotate(transform, rotation, rotationVec);
-		transform = glm::scale(transform, glm::vec3(size, 1.0F));
-
+		constexpr glm::vec4 color(1.0F);
+		const glm::vec2* texCoords = texture.getTexCoords();
 		for (int i = 0; i < 4; i++) {
 			Data.quadData.ptr->transform = transform;
 			Data.quadData.ptr->pos = Data.quadData.vertexIdentities[i];
 			Data.quadData.ptr->color = color;
+			Data.quadData.ptr->texCoord = texCoords[i];
+			Data.quadData.ptr->texIndex = textureIndex;
+			Data.quadData.ptr->tilingFactor = tilingFactor;
+			Data.quadData.ptr++;
+		}
+
+		Data.quadData.indexCount += 6;
+		Data.stats.quadCount++;
+
+		if (Data.quadData.indexCount == Data.quadData.maxIndices) Flush();
+	}
+
+	void Renderer2D::DrawQuad(const glm::mat4& transform, const SubTexture2D& texture, const ColorVec& tintColor, float tilingFactor) {
+		uint32_t textureIndex = GetTextureIndex(texture.getTexture());
+
+		const glm::vec2* texCoords = texture.getTexCoords();
+		for (int i = 0; i < 4; i++) {
+			Data.quadData.ptr->transform = transform;
+			Data.quadData.ptr->pos = Data.quadData.vertexIdentities[i];
+			Data.quadData.ptr->color = tintColor.rgba;
+			Data.quadData.ptr->texCoord = texCoords[i];
+			Data.quadData.ptr->texIndex = textureIndex;
+			Data.quadData.ptr->tilingFactor = tilingFactor;
+			Data.quadData.ptr++;
+		}
+
+		Data.quadData.indexCount += 6;
+		Data.stats.quadCount++;
+
+		if (Data.quadData.indexCount == Data.quadData.maxIndices) Flush();
+	}
+
+	void Renderer2D::DrawQuad(const PositionVec& position, const ScaleVec& size, const glm::vec4& color) {
+		constexpr glm::mat4 identity(1.0F);
+		
+		for (int i = 0; i < 4; i++) {
+			Data.quadData.ptr->transform = identity;
+			Data.quadData.ptr->pos = Data.quadData.vertexIdentities[i] * size.scale4D + glm::vec4(position.pos3D, 0.0F);
+			Data.quadData.ptr->color = color;
 			Data.quadData.ptr->texCoord = Data.quadData.textureCoordIdentities[i];
 			Data.quadData.ptr->texIndex = 0;
 			Data.quadData.ptr->tilingFactor = 1.0F;
@@ -274,22 +264,68 @@ namespace XEON {
 		if (Data.quadData.indexCount == Data.quadData.maxIndices) Flush();
 	}
 
-	void Renderer2D::DrawRotatedQuad(glm::vec2& position, const glm::vec2& size, float rotation, const Ref<Texture>& texture, float tilingFactor) {
-		DrawRotatedQuad(glm::vec3(position, 0.0F), size, rotation, texture, tilingFactor);
-	}
-
-	void Renderer2D::DrawRotatedQuad(glm::vec3& position, const glm::vec2& size, float rotation, const Ref<Texture>& texture, float tilingFactor) {
+	void Renderer2D::DrawQuad(const PositionVec& position, const ScaleVec& size, const Ref<Texture>& texture, float tilingFactor) {
 		uint32_t textureIndex = GetTextureIndex(texture);
-		PushRotatedTexturedQuadVertices(position, size, rotation, textureIndex, tilingFactor);
+		PushTexturedQuadVertices(position.pos4D, size.scale4D, textureIndex, tilingFactor);
 	}
 
-	void Renderer2D::DrawRotatedQuad(glm::vec2& position, const glm::vec2& size, float rotation, const Ref<Texture>& texture, const glm::vec4& tintColor, float tilingFactor) {
-		DrawRotatedQuad(glm::vec3(position, 0.0F), size, rotation, texture, tintColor, tilingFactor);
-	}
-
-	void Renderer2D::DrawRotatedQuad(glm::vec3& position, const glm::vec2& size, float rotation, const Ref<Texture>& texture, const glm::vec4& tintColor, float tilingFactor) {
+	void Renderer2D::DrawQuad(const PositionVec& position, const ScaleVec& size, const Ref<Texture>& texture, const ColorVec& tintColor, float tilingFactor) {
 		uint32_t textureIndex = GetTextureIndex(texture);
-		PushRotatedTexturedQuadVertices(position, size, rotation, textureIndex, tilingFactor, tintColor);
+		PushTexturedQuadVertices(position.pos4D, size.scale4D, textureIndex, tilingFactor, tintColor.rgba);
+	}
+
+	void Renderer2D::DrawQuad(const PositionVec& position, const ScaleVec& size, const SubTexture2D& texture, float tilingFactor) {
+		uint32_t textureIndex = GetTextureIndex(texture.getTexture());
+		PushSubTexturedQuadVertices(position.pos4D, size.scale4D, textureIndex, texture.getTexCoords(), tilingFactor);
+	}
+
+	void Renderer2D::DrawQuad(const PositionVec& position, const ScaleVec& size, const SubTexture2D& texture, const ColorVec& tintColor, float tilingFactor) {
+		uint32_t textureIndex = GetTextureIndex(texture.getTexture());
+		PushSubTexturedQuadVertices(position.pos4D, size.scale4D, textureIndex, texture.getTexCoords(), tilingFactor, tintColor.rgba);
+	}
+
+	void Renderer2D::DrawRotatedQuad(const PositionVec& position, const ScaleVec& size, float rotation, const ColorVec& color) {
+		constexpr glm::mat4 identity(1.0F);
+		constexpr glm::vec3 rotationVec{ 0.0F, 0.0F, 1.0F };
+		glm::mat4 transform = glm::translate(identity, position.pos3D);
+		transform = glm::rotate(transform, rotation, rotationVec);
+		transform = glm::scale(transform, size.scale3D);
+
+		for (int i = 0; i < 4; i++) {
+			Data.quadData.ptr->transform = transform;
+			Data.quadData.ptr->pos = Data.quadData.vertexIdentities[i];
+			Data.quadData.ptr->color = color.rgba;
+			Data.quadData.ptr->texCoord = Data.quadData.textureCoordIdentities[i];
+			Data.quadData.ptr->texIndex = 0;
+			Data.quadData.ptr->tilingFactor = 1.0F;
+			Data.quadData.ptr++;
+		}
+
+		Data.quadData.indexCount += 6;
+		Data.stats.quadCount++;
+
+		if (Data.quadData.indexCount == Data.quadData.maxIndices) Flush();
+	}
+
+
+	void Renderer2D::DrawRotatedQuad(const PositionVec& position, const ScaleVec& size, float rotation, const Ref<Texture>& texture, float tilingFactor) {
+		uint32_t textureIndex = GetTextureIndex(texture);
+		PushRotatedTexturedQuadVertices(position.pos4D, size.scale4D, rotation, textureIndex, tilingFactor);
+	}
+
+	void Renderer2D::DrawRotatedQuad(const PositionVec& position, const ScaleVec& size, float rotation, const Ref<Texture>& texture, const ColorVec& tintColor, float tilingFactor) {
+		uint32_t textureIndex = GetTextureIndex(texture);
+		PushRotatedTexturedQuadVertices(position.pos4D, size.scale4D, rotation, textureIndex, tilingFactor, tintColor.rgba);
+	}
+
+	void Renderer2D::DrawRotatedQuad(const PositionVec& position, const ScaleVec& size, float rotation, const SubTexture2D& texture, float tilingFactor) {
+		uint32_t textureIndex = GetTextureIndex(texture.getTexture());
+		PushRotatedSubTexturedQuadVertices(position.pos4D, size.scale4D, rotation, textureIndex, texture.getTexCoords(), tilingFactor);
+	}
+
+	void Renderer2D::DrawRotatedQuad(const PositionVec& position, const ScaleVec& size, float rotation, const SubTexture2D& texture, const ColorVec& tintColor, float tilingFactor) {
+		uint32_t textureIndex = GetTextureIndex(texture.getTexture());
+		PushRotatedSubTexturedQuadVertices(position.pos4D, size.scale4D, rotation, textureIndex, texture.getTexCoords(), tilingFactor, tintColor.rgba);
 	}
 
 	void Renderer2D::ResetStats() {
@@ -300,14 +336,12 @@ namespace XEON {
 		return Data.stats;
 	}
 
-	void Renderer2D::PushTexturedQuadVertices(const glm::vec3& position, const glm::vec2& size, uint32_t texIndex, float tilingFactor, const glm::vec4& color) {
+	void Renderer2D::PushTexturedQuadVertices(const glm::vec4& position, const glm::vec4& size, uint32_t texIndex, float tilingFactor, const glm::vec4& color) {
 		constexpr glm::mat4 identity(1.0F);
-		static glm::vec4 scale(0.0F, 0.0F, 1.0F, 1.0F);
-		scale.x = size.x; scale.y = size.y;
 
 		for (int i = 0; i < 4; i++) {
 			Data.quadData.ptr->transform = identity;
-			Data.quadData.ptr->pos = Data.quadData.vertexIdentities[i] * scale + glm::vec4(position, 0.0F);
+			Data.quadData.ptr->pos = Data.quadData.vertexIdentities[i] * size + position;
 			Data.quadData.ptr->color = color;
 			Data.quadData.ptr->texCoord = Data.quadData.textureCoordIdentities[i];
 			Data.quadData.ptr->texIndex = texIndex;
@@ -321,18 +355,60 @@ namespace XEON {
 		if (Data.quadData.indexCount == Data.quadData.maxIndices) Flush();
 	}
 
-	void Renderer2D::PushRotatedTexturedQuadVertices(const glm::vec3& position, const glm::vec2& size, float rotation, uint32_t texIndex, float tilingFactor, const glm::vec4& color) {
+	void Renderer2D::PushSubTexturedQuadVertices(const glm::vec4& position, const glm::vec4& size, uint32_t texIndex, const glm::vec2* texCoords, float tilingFactor, const glm::vec4& color) {
 		constexpr glm::mat4 identity(1.0F);
-		constexpr glm::vec3 rotationVec{0.0F, 0.0F, 1.0F};
+
+		for (int i = 0; i < 4; i++) {
+			Data.quadData.ptr->transform = identity;
+			Data.quadData.ptr->pos = Data.quadData.vertexIdentities[i] * size + position;
+			Data.quadData.ptr->color = color;
+			Data.quadData.ptr->texCoord = texCoords[i];
+			Data.quadData.ptr->texIndex = texIndex;
+			Data.quadData.ptr->tilingFactor = tilingFactor;
+			Data.quadData.ptr++;
+		}
+
+		Data.quadData.indexCount += 6;
+		Data.stats.quadCount++;
+
+		if (Data.quadData.indexCount == Data.quadData.maxIndices) Flush();
+	}
+
+	void Renderer2D::PushRotatedTexturedQuadVertices(const glm::vec3& position, const glm::vec3& size, float rotation, uint32_t texIndex, float tilingFactor, const glm::vec4& color) {
+		constexpr glm::mat4 identity(1.0F);
+		constexpr glm::vec3 rotationVec{ 0.0F, 0.0F, 1.0F };
 		glm::mat4 transform = glm::translate(identity, position);
 		transform = glm::rotate(transform, rotation, rotationVec);
-		transform = glm::scale(transform, glm::vec3(size, 1.0F));
+		transform = glm::scale(transform, size);
 
 		for (int i = 0; i < 4; i++) {
 			Data.quadData.ptr->transform = transform;
 			Data.quadData.ptr->pos = Data.quadData.vertexIdentities[i];
 			Data.quadData.ptr->color = color;
 			Data.quadData.ptr->texCoord = Data.quadData.textureCoordIdentities[i];
+			Data.quadData.ptr->texIndex = texIndex;
+			Data.quadData.ptr->tilingFactor = tilingFactor;
+			Data.quadData.ptr++;
+		}
+
+		Data.quadData.indexCount += 6;
+		Data.stats.quadCount++;
+
+		if (Data.quadData.indexCount == Data.quadData.maxIndices) Flush();
+	}
+
+	void Renderer2D::PushRotatedSubTexturedQuadVertices(const glm::vec3& position, const glm::vec3& size, float rotation, uint32_t texIndex, const glm::vec2* texCoords, float tilingFactor, const glm::vec4& color) {
+		constexpr glm::mat4 identity(1.0F);
+		constexpr glm::vec3 rotationVec{0.0F, 0.0F, 1.0F};
+		glm::mat4 transform = glm::translate(identity, position);
+		transform = glm::rotate(transform, rotation, rotationVec);
+		transform = glm::scale(transform, size);
+
+		for (int i = 0; i < 4; i++) {
+			Data.quadData.ptr->transform = transform;
+			Data.quadData.ptr->pos = Data.quadData.vertexIdentities[i];
+			Data.quadData.ptr->color = color;
+			Data.quadData.ptr->texCoord = texCoords[i];
 			Data.quadData.ptr->texIndex = texIndex;
 			Data.quadData.ptr->tilingFactor = tilingFactor;
 			Data.quadData.ptr++;

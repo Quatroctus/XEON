@@ -15,7 +15,7 @@ public:
 	virtual void onEvent(XEON::Event& e) override;
 
 private:
-	XEON::Ref<XEON::Texture> texture;
+	XEON::Ref<XEON::Texture2D> texture;
 
 	XEON::OrthographicCameraController cameraController;
 

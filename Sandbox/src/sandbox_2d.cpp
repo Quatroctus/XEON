@@ -30,7 +30,7 @@ void UpdateFrameData(XEON::Timestep delta) {
 	}
 }
 
-void BatchStress(XEON::Timestep delta, XEON::Ref<XEON::Texture>& texture) {
+void BatchStress(XEON::Timestep delta, XEON::Ref<XEON::Texture2D>& texture) {
 	UpdateFrameData(delta);
 	constexpr uint64_t width = 500;
 	constexpr uint64_t size = width * width;
@@ -43,6 +43,7 @@ void BatchStress(XEON::Timestep delta, XEON::Ref<XEON::Texture>& texture) {
 	init = false;
 	}
 	constexpr glm::vec2 scale(0.25F);
+	const XEON::SubTexture2D tex = XEON::SubTexture2D::CreateFromCoords(texture, glm::vec2(0, 0), glm::vec2(8, 8));
 	for (uint32_t i = 0; i < size; i++) {
 		XEON::Renderer2D::DrawQuad(*(tileMap + i), scale, texture);
 	}
