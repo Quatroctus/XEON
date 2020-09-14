@@ -14,7 +14,7 @@ namespace XEON {
 			case ShaderDataType::FLOAT3: return 12;
 			case ShaderDataType::FLOAT4: return 16;
 			case ShaderDataType::MAT3: return 36;
-			case ShaderDataType::MAT4: return 144;
+			case ShaderDataType::MAT4: return 64;
 			case ShaderDataType::INT: return 4;
 			case ShaderDataType::INT2: return 8;
 			case ShaderDataType::INT3: return 12;
@@ -29,7 +29,8 @@ namespace XEON {
 		bool normalized;
 		std::string name;
 		ShaderDataType type;
-		uint32_t size, offset;
+		uint32_t size;
+		size_t offset;
 
 		BufferElement() : normalized(false), name(""), type(ShaderDataType::NONE), size(0), offset(0) {}
 		BufferElement(ShaderDataType type, const std::string& name, bool normalized = 0)
