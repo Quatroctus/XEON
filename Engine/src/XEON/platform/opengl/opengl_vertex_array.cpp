@@ -52,9 +52,35 @@ namespace XEON {
 		uint32_t index = 0;
 		const auto& layout = vertexBuffer->getLayout();
 		for (const auto& element : layout) {
-			glEnableVertexAttribArray(index);
-			glVertexAttribPointer(index, element.getComponentCount(), translateShaderDataType(element.type), element.normalized ? GL_TRUE : GL_FALSE, layout.getStride(), (const void*)element.offset);
-			index++;
+			switch (element.type) {
+			case ShaderDataType::INT:
+			case ShaderDataType::INT2:
+			case ShaderDataType::INT3:
+			case ShaderDataType::INT4:
+				glEnableVertexAttribArray(index);
+				glVertexAttribIPointer(index, element.getComponentCount(), GL_INT, layout.getStride(), (const void*)element.offset);
+				index++;
+				break;
+			case ShaderDataType::MAT3:
+				for (size_t j = 0; j < 36; j+=12) {
+					glEnableVertexAttribArray(index);
+					glVertexAttribPointer(index, 3, GL_FLOAT, element.normalized ? GL_TRUE : GL_FALSE, layout.getStride(), (const void*)(element.offset + j));
+					index++;
+				}
+				break;
+			case ShaderDataType::MAT4:
+				for (size_t j = 0; j < 64; j += 16) {
+					glEnableVertexAttribArray(index);
+					glVertexAttribPointer(index, 4, GL_FLOAT, element.normalized ? GL_TRUE : GL_FALSE, layout.getStride(), (const void*)(element.offset + j));
+					index++;
+				}
+				break;
+			default:
+				glEnableVertexAttribArray(index);
+				glVertexAttribPointer(index, element.getComponentCount(), translateShaderDataType(element.type), element.normalized ? GL_TRUE : GL_FALSE, layout.getStride(), (const void*)element.offset);
+				index++;
+				break;
+			}
 		}
 
 		vertexBuffers.push_back(vertexBuffer);
