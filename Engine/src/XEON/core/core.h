@@ -41,8 +41,14 @@
 	#error XEON only supports Windows.
 #endif
 
+#define IMGUI_LAYERS
+
 #ifdef XEON_DEBUG
 	#define XEON_ENABLE_ASSERTS
+#endif
+
+#ifdef XEON_DIST
+#undef IMGUI_LAYERS
 #endif
 
 #ifdef XEON_ENABLE_ASSERTS

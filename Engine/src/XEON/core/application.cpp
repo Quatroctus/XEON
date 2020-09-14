@@ -42,12 +42,14 @@ namespace XEON {
 					XEON_PROFILE_SCOPE("LayerStack Update");
 					for (Layer* layer : layerStack) layer->onUpdate(timestep);
 				}
+#ifdef IMGUI_LAYERS
 				imguiLayer->begin();
 				{
 					XEON_PROFILE_SCOPE("LayerStack ImGui Update");
 					for (Layer* layer : layerStack) layer->onImGuiRender();
 				}
 				imguiLayer->end();
+#endif
 			}
 
 
