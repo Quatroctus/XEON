@@ -12,7 +12,7 @@ uniform mat4 u_ViewProjection;
 
 out vec4 v_Color;
 out vec2 v_TexCoord;
-out int v_TexIndex;
+flat out int v_TexIndex;
 out float v_TilingFactor;
 
 void main() {

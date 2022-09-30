@@ -10,6 +10,7 @@
 #include <sstream>
 #include <vector>
 #include <queue>
+#include <optional>
 #include <unordered_map>
 #include <unordered_set>
 

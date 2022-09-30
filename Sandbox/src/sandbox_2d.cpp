@@ -2,6 +2,9 @@
 
 #include "sandbox_2d.h"
 
+#include <XEON/ecs/slime_entity.h>
+#include <XEON/ecs/entity_storage.hpp>
+
 #include <imgui.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include "glm/gtc/type_ptr.hpp"
@@ -19,7 +22,7 @@ void UpdateFrameData(XEON::Timestep delta) {
 	static float frames = 0.0F;
 	static float accumulated = 0.0F;
 	
-	constexpr float fps = 1.0F / 60.0F;
+	//constexpr float fps = 1.0F / 60.0F;
 	accumulated += delta;
 	frames++;
 	if (accumulated >= 1.0F) {
@@ -32,20 +35,35 @@ void UpdateFrameData(XEON::Timestep delta) {
 
 void BatchStress(XEON::Timestep delta, XEON::Ref<XEON::Texture2D>& texture) {
 	UpdateFrameData(delta);
-	constexpr uint64_t width = 500;
+	constexpr uint64_t width = 410;
 	constexpr uint64_t size = width * width;
 	static bool init = true;
 	static glm::vec3 tileMap[size];
+	static EntityStorage storage;
+	static Entity entity = CreateSlimeEntity(storage, {0, 0, 0});
+
+	//auto position = storage.opt<PositionComponent>(entity);
+	//auto name = storage.opt<NameComponent>(entity);
+
+	//auto query1 = storage.query<PositionComponent, NameComponent>();
+	//auto query2 = storage.query<PositionComponent>();
+	//
+	//std::cerr << (std::get<PositionComponent&>(query1[0]).pos == (*position)->pos) << std::endl;
+	//std::cerr << (std::get<PositionComponent&>(query1[0]).pos == std::get<PositionComponent&>(query2[0]).pos) << std::endl;
+	//std::cerr << (std::get<NameComponent&>(query1[0]).name == (*name)->name) << std::endl;
+
+	//std::cerr << (*name)->name << " at position: " << position.has_value() << std::endl;
+
 	if (init) {
-	for (float x = 0; x < (float)width; x++)
-		for (float y = 0; y < (float)width; y++)
-			emplace(tileMap[(int)y * width + (int)x], x * 0.26F, y * 0.26F, 0.0F);
-	init = false;
+		for (float x = 0; x < (float)width; x++)
+			for (float y = 0; y < (float)width; y++)
+				emplace(tileMap[(int)y * width + (int)x], x * 0.26F, y * 0.26F, 0.0F);
+		init = false;
 	}
 	constexpr glm::vec2 scale(0.25F);
-	const XEON::SubTexture2D tex = XEON::SubTexture2D::CreateFromCoords(texture, glm::vec2(0, 0), glm::vec2(8, 8));
-	for (uint32_t i = 0; i < size; i++) {
-		XEON::Renderer2D::DrawQuad(*(tileMap + i), scale, texture);
+	static const XEON::SubTexture2D tex = XEON::SubTexture2D::CreateFromCoords(texture, glm::vec2(0, 0), glm::vec2(8, 8));
+	for (auto& pos : tileMap) {
+		XEON::Renderer2D::DrawQuad(pos, scale, texture);
 	}
 }
 

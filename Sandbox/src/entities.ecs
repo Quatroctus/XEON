@@ -1,0 +1,17 @@
+COMPONENTS
+	PositionComponent VelocityComponent KeyboardCallbackComponent
+
+COMPONENT AttributeComponent uint32_t health, uint32_t maxHealth
+
+GROUP 
+
+ENTITY EntityPlayer 
+	FUNCTION const glm::vec3& position, KeyboardCallbackComponent::Callback forward, KeyboardCallbackComponent::Callback backwards, KeyboardCallbackComponent::Callback leftwards, KeyboardCallbackComponent::Callback rightwards
+	CONTAINS PositionComponent{position}, VelocityComponent{}, KeyboardCallbackComponent{{KEY_W, forward}, {KEY_S, backwards}, {KEY_A, leftwards}, {KEY_D, rightwards}}, InventoryComponent<>{}, AttributesComponent{}, SpriteSheetComponent{}
+	RENDER StateSpriteSheetRenderSystem
+	USES UserInputSystem
+
+ENTITY EntitySlime 
+	FUNCTION 
+	CONTAINS PositionComponent, VelocityComponent, AttributesComponent, ItemDropComponent, TargetAIComponent, BounceAroundComponent, SpriteSheetComponent
+	USES StateSpriteSheetRenderSystem, TargetPlayersSystem

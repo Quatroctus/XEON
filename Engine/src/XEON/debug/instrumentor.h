@@ -31,7 +31,7 @@ namespace XEON {
 		Instrumentor(Instrumentor&&) = delete;
 
 		void beginSession(const std::string& name, const std::string& filepath = "results.json", bool forceLog=false) {
-			std::lock_guard<std::mutex> lock(lock); 
+			const std::lock_guard<std::mutex> lock(this->lock);
 			if (forceLog) {
 				over = (log = true);
 			}
@@ -41,7 +41,7 @@ namespace XEON {
 		}
 
 		void endSession(bool reset=true) {
-			std::lock_guard<std::mutex> lock(lock);
+			const std::lock_guard<std::mutex> lock(this->lock);
 			if (reset) {
 				over = (log = false);
 			}
@@ -51,7 +51,7 @@ namespace XEON {
 		}
 
 		void writeProfile(const ProfileResult& result) {
-			std::lock_guard<std::mutex> lock(lock);
+			const std::lock_guard<std::mutex> lock(this->lock);
 			if (!log) return;
 
 			std::stringstream json;

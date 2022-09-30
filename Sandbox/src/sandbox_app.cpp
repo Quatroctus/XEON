@@ -7,6 +7,8 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
+#include <tuple>
+
 class SandboxLayer : public XEON::Layer {
 public:
 	SandboxLayer() : Layer("Sandbox"), cameraController(16.0F / 9.0F, true) {
@@ -74,6 +76,11 @@ public:
 	}
 
 	void onUpdate(XEON::Timestep delta) override {
+
+		std::tuple<std::optional<int>, std::optional<float>> single{};
+		std::apply([](auto& ...opt) { return (opt && ...); }, single);
+		std::apply([](auto& ...opt) { return std::make_tuple((*opt)...); }, single);
+
 		cameraController.onUpdate(delta);
 
 		glm::mat4 identity{ 1.0F };

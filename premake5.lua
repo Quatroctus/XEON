@@ -72,13 +72,9 @@ project "Engine"
 	}
 
 	filter "configurations:*32"
-		links {
-			"$(SolutionDir)/Libraries/Vulkan/Lib32/vulkan-1.lib"
-		}
+		
 	filter "configurations:*x86_64"
-		links {
-			"$(SolutionDir)/Libraries/Vulkan/Lib/vulkan-1.lib"
-		}
+
 
 	filter "system:windows"
         systemversion "latest"

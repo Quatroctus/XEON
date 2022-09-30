@@ -9,6 +9,8 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
+
+// TODO: Rewrite Batch Rendering techniques.
 namespace XEON {
 
 	struct QuadVertex {
